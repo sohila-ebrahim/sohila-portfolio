@@ -4,7 +4,11 @@ import { gsap, prefersReduced, useGSAP } from "@/lib/gsap";
 import { LOADED_EVENT, scrollToTarget } from "@/lib/scroll";
 import { useLang } from "@/lib/lang";
 import HeroCards from "./HeroCards";
+import dynamic from "next/dynamic";
 import IdBadge from "./IdBadge";
+
+// real 3D physics badge, client-only (WebGL)
+const Badge3D = dynamic(() => import("./Badge3D"), { ssr: false });
 import Signature from "./Signature";
 
 /**
@@ -17,6 +21,14 @@ export default function Hero() {
   const { t, lang } = useLang();
   // badge size follows the viewport so card + strap is ~60% of the screen height
   const [badge, setBadge] = useState({ w: 300, rope: 140 });
+  // WebGL available and motion allowed -> 3D physics badge, otherwise the CSS badge
+  const [use3d, setUse3d] = useState(false);
+  useEffect(() => {
+    const cv = document.createElement("canvas");
+    const gl = cv.getContext("webgl2") || cv.getContext("webgl");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUse3d(Boolean(gl) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
   useEffect(() => {
     const fit = () => {
       const mobile = window.innerWidth < 768;
@@ -89,13 +101,20 @@ export default function Hero() {
         <p className={`h-first pointer-events-none absolute inset-x-0 top-[7%] z-10 text-center md:inset-x-auto md:start-[4%] md:text-start select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[16%] md:text-[10vw] xl:text-[160px]`}>
           {t.firstName}
         </p>
-        <p className={`h-last pointer-events-none absolute inset-x-0 bottom-[16%] z-10 text-center md:inset-x-auto md:bottom-auto md:end-[4%] md:text-end select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[50%] md:text-[10vw] xl:text-[160px]`}>
+        <p className={`h-last pointer-events-none absolute inset-x-0 bottom-[22%] z-10 text-center md:inset-x-auto md:bottom-auto md:end-[4%] md:text-end select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[50%] md:text-[10vw] xl:text-[160px]`}>
           {t.lastName}
         </p>
 
         {/* hanging ID badge with her photo, swinging between the two names */}
-        <div className="h-portrait absolute inset-x-0 top-0 z-20 mx-auto h-full w-full max-w-[560px]">
-          <IdBadge width={badge.w} rope={badge.rope} height="100%" swing glow />
+        <div className={`h-portrait absolute inset-x-0 top-0 z-20 mx-auto h-full w-full ${use3d ? "" : "max-w-[560px]"}`}>
+          {use3d ? (
+            <>
+              <div aria-hidden className="pointer-events-none absolute left-1/2 top-[45%] h-[45%] w-[30%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/35 blur-[90px]" />
+              <Badge3D className="absolute inset-0" />
+            </>
+          ) : (
+            <IdBadge width={badge.w} rope={badge.rope} height="100%" swing glow />
+          )}
         </div>
 
         {/* handwritten signature under the first name (desktop) */}
