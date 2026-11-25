@@ -441,44 +441,35 @@ export const projects: Project[] = [
 
 export const liveProjects = projects.filter((p) => p.liveUrl);
 
-/** simple-icons export names (see src/components/TechIcon.tsx); `icon` empty = text badge */
+/**
+ * Sohila's real stack, taken from the package.json files of her projects.
+ * `icon` = simple-icons export name (see src/lib/icons.ts); empty = monogram badge.
+ */
 export const stack: { group: string; items: { name: string; icon?: string }[] }[] = [
   {
-    group: "Frontend",
+    group: "Frontend Development",
     items: [
-      { name: "TypeScript", icon: "siTypescript" },
-      { name: "JavaScript", icon: "siJavascript" },
       { name: "React", icon: "siReact" },
       { name: "Next.js", icon: "siNextdotjs" },
-      { name: "Vite", icon: "siVite" },
+      { name: "TypeScript", icon: "siTypescript" },
+      { name: "JavaScript", icon: "siJavascript" },
       { name: "HTML", icon: "siHtml5" },
       { name: "CSS", icon: "siCss" },
       { name: "Tailwind CSS", icon: "siTailwindcss" },
-      { name: "shadcn/ui", icon: "siShadcnui" },
-      { name: "TanStack", icon: "siTanstack" },
+      { name: "Vite", icon: "siVite" },
+      { name: "Zustand" },
+      { name: "TanStack Query", icon: "siReactquery" },
+      { name: "React Hook Form", icon: "siReacthookform" },
+      { name: "Zod", icon: "siZod" },
       { name: "React Router", icon: "siReactrouter" },
-      { name: "i18next", icon: "siI18next" },
-    ],
-  },
-  {
-    group: "Motion & 3D",
-    items: [
       { name: "GSAP", icon: "siGsap" },
-      { name: "Three.js", icon: "siThreedotjs" },
       { name: "Framer Motion", icon: "siFramer" },
+      { name: "Three.js", icon: "siThreedotjs" },
       { name: "Lenis" },
-      { name: "Remotion" },
-    ],
-  },
-  {
-    group: "Mobile",
-    items: [
       { name: "React Native", icon: "siReact" },
       { name: "Expo", icon: "siExpo" },
       { name: "Flutter", icon: "siFlutter" },
-      { name: "Dart", icon: "siDart" },
       { name: "Capacitor", icon: "siCapacitor" },
-      { name: "PWA", icon: "siPwa" },
     ],
   },
   {
@@ -487,37 +478,34 @@ export const stack: { group: string; items: { name: string; icon?: string }[] }[
       { name: "Node.js", icon: "siNodedotjs" },
       { name: "Express", icon: "siExpress" },
       { name: "NestJS", icon: "siNestjs" },
-      { name: "Prisma", icon: "siPrisma" },
-      { name: "PostgreSQL", icon: "siPostgresql" },
       { name: "Supabase", icon: "siSupabase" },
+      { name: "PostgreSQL", icon: "siPostgresql" },
+      { name: "Prisma", icon: "siPrisma" },
       { name: "Firebase", icon: "siFirebase" },
-      { name: "Socket.io / WS", icon: "siSocketdotio" },
-      { name: "Zod", icon: "siZod" },
+      { name: "WebSockets", icon: "siSocketdotio" },
+      { name: "REST APIs" },
     ],
   },
   {
-    group: "APIs & Integrations",
+    group: "Integrations & Tools",
     items: [
       { name: "Stripe", icon: "siStripe" },
       { name: "Clover POS" },
       { name: "Twilio" },
       { name: "Resend", icon: "siResend" },
-      { name: "Leaflet", icon: "siLeaflet" },
+      { name: "Leaflet Maps", icon: "siLeaflet" },
+      { name: "Recharts" },
       { name: "AWS S3" },
-      { name: "WordPress", icon: "siWordpress" },
-    ],
-  },
-  {
-    group: "Tools & Deploy",
-    items: [
+      { name: "Axios", icon: "siAxios" },
+      { name: "Vitest", icon: "siVitest" },
+      { name: "Jest", icon: "siJest" },
+      { name: "Playwright" },
+      { name: "ESLint", icon: "siEslint" },
+      { name: "Prettier", icon: "siPrettier" },
       { name: "Git", icon: "siGit" },
       { name: "GitHub", icon: "siGithub" },
       { name: "Vercel", icon: "siVercel" },
       { name: "Netlify", icon: "siNetlify" },
-      { name: "Docker", icon: "siDocker" },
-      { name: "Figma", icon: "siFigma" },
-      { name: "Postman", icon: "siPostman" },
-      { name: "Claude AI", icon: "siClaude" },
     ],
   },
 ];

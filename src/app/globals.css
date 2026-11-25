@@ -13,6 +13,7 @@
   --font-sans: var(--font-bricolage), system-ui, sans-serif;
   --font-display: var(--font-bricolage), system-ui, sans-serif;
   --font-sign: var(--font-sign), cursive;
+  --font-ar: var(--font-alexandria), var(--font-bricolage), sans-serif;
 }
 
 html.lenis, html.lenis body { height: auto; }
@@ -100,3 +101,9 @@ body {
   .grain, .animate-marquee { animation: none; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* hero: animated outline that keeps drawing around the portrait */
+@keyframes dash-run { to { stroke-dashoffset: -1000; } }
+.hero-outline { animation: dash-run 14s linear infinite; }
+.hero-outline-2 { animation: dash-run 22s linear infinite reverse; }
+@media (prefers-reduced-motion: reduce) { .hero-outline, .hero-outline-2 { animation: none; } }

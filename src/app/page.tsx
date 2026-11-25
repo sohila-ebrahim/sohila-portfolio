@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Marquee from "@/components/Marquee";
 import Experience from "@/components/Experience";
+import TechStack from "@/components/TechStack";
 import FeaturedProjects from "@/components/FeaturedProjects";
 import About from "@/components/About";
 import Portfolio from "@/components/Portfolio";
@@ -20,6 +21,7 @@ export default function Home() {
         <Services />
         <Marquee />
         <Experience />
+        <TechStack />
         <FeaturedProjects />
         <About />
         <Portfolio />
