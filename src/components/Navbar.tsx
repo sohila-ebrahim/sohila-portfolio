@@ -2,115 +2,121 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { gsap } from "@/lib/gsap";
-import { getLenis, scrollToTarget } from "@/lib/scroll";
-import { navLinks, profile } from "@/data/portfolio";
+import { gsap, prefersReduced } from "@/lib/gsap";
+import { scrollToTarget } from "@/lib/scroll";
+import { profile } from "@/data/portfolio";
 
+type Item = { label: string; href: string; bg: string; icon: React.ReactNode; external?: boolean };
+
+const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+
+const items: Item[] = [
+  { label: "Home", href: "#top", bg: "from-violet-400 to-violet-700", icon: <path {...stroke} d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" /> },
+  { label: "Projects", href: "#projects", bg: "from-fuchsia-400 to-purple-700", icon: <path {...stroke} d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
+  { label: "Services", href: "#services", bg: "from-indigo-400 to-indigo-700", icon: <path {...stroke} d="M8 6l-6 6 6 6M16 6l6 6-6 6M14 4l-4 16" /> },
+  { label: "About", href: "#about", bg: "from-pink-400 to-rose-600", icon: <><circle {...stroke} cx="12" cy="8" r="4" /><path {...stroke} d="M4 21a8 8 0 0 1 16 0" /></> },
+  { label: "Contact", href: "#contact", bg: "from-sky-400 to-blue-700", icon: <><rect {...stroke} x="3" y="5" width="18" height="14" rx="2" /><path {...stroke} d="M3 7l9 6 9-6" /></> },
+  {
+    label: "WhatsApp",
+    href: profile.whatsapp,
+    external: true,
+    bg: "from-emerald-400 to-green-600",
+    icon: <path {...stroke} d="M20 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.2A8.5 8.5 0 1 1 20 11.5zM9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8a4.5 4.5 0 0 1-2.3-2.3l.8-1-1-2z" />,
+  },
+];
+
+/** Floating app-style dock: a sticky dark pill with colourful icon buttons that magnify like the macOS dock. */
 export default function Navbar() {
-  const ref = useRef<HTMLElement>(null);
-  const [open, setOpen] = useState(false);
-  const [solid, setSolid] = useState(false);
+  const dock = useRef<HTMLDivElement>(null);
+  const [hidden, setHidden] = useState(false);
   const isHome = usePathname() === "/";
 
-  // hide on scroll down, show on scroll up, add a backdrop after the hero
+  // tuck the dock away while scrolling down quickly, bring it back on scroll up
   useEffect(() => {
-    let last = 0;
+    let last = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
-      const hide = y > last && y > 300;
-      gsap.to(ref.current, { yPercent: hide ? -120 : 0, duration: 0.5, ease: "power3.out" });
-      setSolid(y > 80);
+      setHidden(y > last + 4 && y > 600);
+      if (y < last) setHidden(false);
       last = y;
     };
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // mac-dock magnify: icons grow by their distance to the pointer
   useEffect(() => {
-    const lenis = getLenis();
-    if (open) lenis?.stop();
-    else lenis?.start();
-  }, [open]);
+    const el = dock.current;
+    if (!el || prefersReduced() || window.matchMedia("(pointer: coarse)").matches) return;
+    const icons = Array.from(el.querySelectorAll<HTMLElement>(".dock-icon"));
+    const sc = icons.map((i) => gsap.quickTo(i, "scale", { duration: 0.25, ease: "power3" }));
+    const ty = icons.map((i) => gsap.quickTo(i, "y", { duration: 0.25, ease: "power3" }));
+    const move = (e: PointerEvent) => {
+      icons.forEach((icon, k) => {
+        const r = icon.getBoundingClientRect();
+        const d = Math.abs(e.clientX - (r.left + r.width / 2));
+        const f = Math.max(0, 1 - d / 140); // influence radius 140px
+        sc[k](1 + f * 0.55);
+        ty[k](-f * 10);
+      });
+    };
+    const leave = () => { sc.forEach((f) => f(1)); ty.forEach((f) => f(0)); };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerleave", leave);
+    return () => {
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerleave", leave);
+    };
+  }, []);
 
-  const go = (e: React.MouseEvent, href: string) => {
-    setOpen(false);
-    if (!isHome) return; // let the link navigate to /#section
+  const go = (e: React.MouseEvent, it: Item) => {
+    if (it.external || !isHome) return; // let the link navigate (new tab, or /#section)
     e.preventDefault();
-    scrollToTarget(href);
+    scrollToTarget(it.href);
   };
 
   return (
-    <>
-      <header ref={ref} className="fixed inset-x-0 top-0 z-50">
-        <nav
-          className={`px-site flex items-center justify-between py-5 transition-colors duration-500 ${
-            solid && !open ? "bg-bg/70 backdrop-blur-md" : ""
-          }`}
-        >
-          <Link href="/" className="font-display text-xl font-bold tracking-tight md:text-2xl" onClick={(e) => go(e, "#top")}>
-            <span className="text-accent">&lt;</span> {profile.shortName} <span className="text-accent">/&gt;</span>
-          </Link>
-          <ul className="hidden items-center gap-1 text-[15px] font-semibold xl:flex">
-            {navLinks.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={isHome ? l.href : `/${l.href}`}
-                  onClick={(e) => go(e, l.href)}
-                  className="group relative block overflow-hidden rounded-full px-4 py-2"
-                >
-                  <span className="block transition-transform duration-500 ease-[cubic-bezier(.77,0,.18,1)] group-hover:-translate-y-full">{l.label}</span>
-                  <span aria-hidden className="absolute inset-x-4 top-full block text-accent-soft transition-transform duration-500 ease-[cubic-bezier(.77,0,.18,1)] group-hover:-translate-y-full">
-                    {l.label}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div className="flex items-center gap-3">
-            <a
-              href={isHome ? "#contact" : "/#contact"}
-              onClick={(e) => go(e, "#contact")}
-              className="hidden rounded-full border border-accent/70 px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent sm:inline-block"
-            >
-              Let&apos;s talk
-            </a>
-            <button
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              onClick={() => setOpen((o) => !o)}
-              className="relative z-10 flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-line bg-surface/80 xl:hidden"
-            >
-              <span className={`h-px w-5 bg-fg transition ${open ? "translate-y-[3.5px] rotate-45" : ""}`} />
-              <span className={`h-px w-5 bg-fg transition ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`} />
-            </button>
-          </div>
-        </nav>
-      </header>
-
-      <div
-        className={`fixed inset-0 z-40 flex flex-col justify-center gap-4 bg-bg px-8 transition-[clip-path] duration-700 ease-[cubic-bezier(.77,0,.18,1)] xl:hidden ${
-          open ? "[clip-path:inset(0_0_0_0)]" : "pointer-events-none [clip-path:inset(0_0_100%_0)]"
-        }`}
+    <header
+      className={`fixed inset-x-0 top-3 z-50 flex justify-center px-3 transition-transform duration-500 ease-[cubic-bezier(.77,0,.18,1)] md:top-5 ${
+        hidden ? "-translate-y-[140%]" : "translate-y-0"
+      }`}
+    >
+      <nav
+        ref={dock}
+        aria-label="Main"
+        className="flex items-end gap-1.5 rounded-[22px] border border-white/10 bg-[#120f1c]/80 px-2.5 py-2 shadow-[0_20px_50px_rgba(0,0,0,.55),0_0_0_1px_rgba(139,92,246,.12),inset_0_1px_0_rgba(255,255,255,.06)] backdrop-blur-xl md:gap-2 md:px-3"
       >
-        <div aria-hidden className="absolute right-[-20%] top-[10%] h-96 w-96 rounded-full bg-accent/25 blur-[120px]" />
-        {navLinks.map((l, i) => (
+        <Link
+          href="/"
+          onClick={(e) => { if (isHome) { e.preventDefault(); scrollToTarget("#top"); } }}
+          className="mr-1 hidden items-center self-center whitespace-nowrap rounded-full px-3 font-display text-sm font-bold md:flex"
+        >
+          <span className="text-accent">&lt;</span>&nbsp;{profile.shortName}&nbsp;<span className="text-accent">/&gt;</span>
+        </Link>
+        <span aria-hidden className="mr-1 hidden h-8 w-px self-center bg-white/10 md:block" />
+        {items.map((it) => (
           <a
-            key={l.href}
-            href={isHome ? l.href : `/${l.href}`}
-            onClick={(e) => go(e, l.href)}
-            className="relative flex items-baseline gap-4 font-display text-5xl font-bold uppercase"
+            key={it.label}
+            href={it.external ? it.href : isHome ? it.href : `/${it.href}`}
+            target={it.external ? "_blank" : undefined}
+            rel={it.external ? "noreferrer" : undefined}
+            onClick={(e) => go(e, it)}
+            aria-label={it.label}
+            className="group relative"
           >
-            <span className="text-sm text-accent">0{i + 1}</span>
-            {l.label}
+            <span
+              className={`dock-icon flex h-10 w-10 origin-bottom items-center justify-center rounded-[12px] bg-gradient-to-br ${it.bg} text-white shadow-[inset_0_1px_0_rgba(255,255,255,.45),0_6px_14px_rgba(0,0,0,.35)] will-change-transform md:h-11 md:w-11`}
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5 drop-shadow-[0_1px_1px_rgba(0,0,0,.25)]" aria-hidden>
+                {it.icon}
+              </svg>
+            </span>
+            <span className="pointer-events-none absolute left-1/2 top-full mt-3 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md border border-white/10 bg-[#120f1c] px-2.5 py-1 text-xs font-semibold opacity-0 shadow-lg transition duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:opacity-100">
+              {it.label}
+            </span>
           </a>
         ))}
-        <div className="relative mt-8 flex gap-6 text-sm text-muted">
-          {profile.socials.map((s) => (
-            <a key={s.label} href={s.href} target="_blank" rel="noreferrer">{s.label}</a>
-          ))}
-        </div>
-      </div>
-    </>
+      </nav>
+    </header>
   );
 }
