@@ -139,3 +139,17 @@ html[lang="ar"] .uppercase { text-transform: none; }
 /* CV page section headings */
 .cv-h { font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: #7c3aed; border-bottom: 1px solid #e4e0ee; padding-bottom: 2px; }
 .cv-page, .cv-page * { cursor: auto; }
+
+/* now listening: spinning vinyl, equalizer and progress */
+.vinyl {
+  background:
+    repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.06) 0 1px, transparent 1px 5px),
+    conic-gradient(from 0deg, #1a1030, #3b1d78, #1a1030 25%, #6d28d9 40%, #1a1030 55%, #a21caf 70%, #1a1030 85%, #3b1d78);
+  animation: vinyl-spin 6s linear infinite;
+}
+@keyframes vinyl-spin { to { transform: rotate(360deg); } }
+.eq-bar { height: 40%; animation: eq 0.9s ease-in-out infinite alternate; }
+@keyframes eq { 0% { height: 20%; } 100% { height: 100%; } }
+.track-progress { width: 0; animation: track 40s linear infinite; }
+@keyframes track { to { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .vinyl, .eq-bar, .track-progress { animation: none; } .track-progress { width: 38%; } }

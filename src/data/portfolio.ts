@@ -494,7 +494,13 @@ export const stack: { group: string; items: { name: string; icon?: string }[] }[
 export const achievements: { title: string; detail: string; year: string }[] = [];
 
 /** "Now listening" card: put a song you like here. Empty = placeholder text. */
-export const nowListening = { title: "", artist: "", cover: "" };
+export const nowListening = {
+  title: "El Donia Zay El Margeha",
+  titleAr: "الدنيا زي المرجيحة",
+  artist: "", // not confirmed yet
+  // no audio is hosted: the play button opens the song on YouTube
+  url: "https://www.youtube.com/results?search_query=" + encodeURIComponent("الدنيا زي المرجيحة"),
+};
 
 /** Years of experience, from the earliest year in the experience list. */
 export const yearsOfExperience = Math.max(1, Number(d) - Math.min(...experience.map((e) => Number(e.period.slice(0, 4)))));

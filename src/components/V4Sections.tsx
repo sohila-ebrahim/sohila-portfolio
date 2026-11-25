@@ -171,34 +171,44 @@ export function ServiceLetters() {
 
 /* ------------------------------------------------------------------ now listening */
 export function NowListening() {
-  const { t } = useLang();
-  const title = nowListening.title || t.trackPlaceholder;
-  const artist = nowListening.artist || t.artistPlaceholder;
+  const { t, lang } = useLang();
+  const title = (lang === "ar" ? nowListening.titleAr : nowListening.title) || t.trackPlaceholder;
   return (
     <section className="px-site py-16">
       <div className="mx-auto grid max-w-4xl items-center gap-8 rounded-[32px] border border-white/10 bg-gradient-to-br from-[#1a1530] to-[#0f0c19] p-6 md:grid-cols-[auto_1fr] md:p-10">
-        <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-400 shadow-[0_20px_50px_rgba(139,92,246,.4)]">
-          {nowListening.cover ? (
-            <Image src={nowListening.cover} alt="" fill sizes="160px" className="object-cover" />
-          ) : (
-            <span className="absolute inset-0 flex items-center justify-center text-6xl text-white/90">♪</span>
-          )}
-          <span aria-hidden className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/20" />
+        {/* generated violet "vinyl" artwork (no real cover art) */}
+        <div className="relative mx-auto h-44 w-44">
+          <div className="vinyl absolute inset-0 rounded-full shadow-[0_20px_50px_rgba(139,92,246,.45)]" />
+          <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-violet-400 via-fuchsia-500 to-pink-400 ring-4 ring-black/40">
+            <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0f0c19]" />
+          </div>
         </div>
         <div>
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-accent-soft">
-            <span className="flex h-3 items-end gap-[2px]" aria-hidden>
-              {[0, 1, 2, 3].map((i) => <span key={i} className="w-[3px] animate-pulse rounded bg-accent-soft" style={{ height: `${6 + ((i * 5) % 9)}px`, animationDelay: `${i * 0.15}s` }} />)}
+            <span className="flex h-4 items-end gap-[3px]" aria-hidden>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <span key={i} className="eq-bar w-[3px] rounded bg-accent-soft" style={{ animationDelay: `${i * 0.13}s` }} />
+              ))}
             </span>
             {t.nowListening}
           </p>
           <p className="mt-3 text-2xl font-bold md:text-3xl">{title}</p>
-          <p className="text-muted">{artist}</p>
+          {nowListening.artist && <p className="text-muted">{nowListening.artist}</p>}
           <div className="mt-6 flex items-center gap-4">
-            <button aria-label="Play" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#140f22] transition hover:scale-110">▶</button>
+            <a
+              href={nowListening.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Play ${title} on YouTube`}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#140f22] transition hover:scale-110"
+            >
+              ▶
+            </a>
             <div className="flex-1">
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full w-[38%] rounded-full bg-gradient-to-r from-violet-400 to-pink-400" /></div>
-              <div className="mt-1.5 flex justify-between text-xs text-muted" dir="ltr"><span>1:24</span><span>3:42</span></div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div className="track-progress h-full rounded-full bg-gradient-to-r from-violet-400 to-pink-400" />
+              </div>
+              <p className="mt-1.5 text-xs text-muted">YouTube ↗</p>
             </div>
           </div>
           <p className="mt-5 text-sm italic text-fg/60">{t.musicTagline}</p>
