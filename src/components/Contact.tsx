@@ -33,7 +33,13 @@ export default function Contact() {
         body: JSON.stringify({ name: f.get("name"), email: f.get("email"), message: f.get("message"), company: f.get("company") }),
       });
       if (r.status === 429) return setStatus("rate");
-      if (!r.ok) return setStatus("err");
+      if (!r.ok) {
+        // email service unavailable: fall back to the visitor's own email app so the message isn't lost
+        const subject = `New message from your portfolio - ${f.get("name")}`;
+        const body = `${f.get("message")}\n\n— ${f.get("name")} (${f.get("email")})`;
+        window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        return setStatus("err");
+      }
       setStatus("ok");
       form.reset();
     } catch {
