@@ -44,8 +44,10 @@ export default function Contact() {
       setStatus("err");
     };
     try {
+      // give up after 20 s so the button never hangs on "Sending…"
       const r = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_TARGET}`, {
         method: "POST",
+        signal: AbortSignal.timeout(20000),
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           name,
