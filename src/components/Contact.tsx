@@ -5,10 +5,11 @@ import { profile } from "@/data/portfolio";
 import SplitText from "./SplitText";
 import TechIcon from "./TechIcon";
 import { useLang } from "@/lib/lang";
+import { scrollToTarget } from "@/lib/scroll";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err" | "rate">("idle");
   const { t } = useLang();
 
   useGSAP(
@@ -19,16 +20,25 @@ export default function Contact() {
     { scope: ref }
   );
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  // sends the form to /api/contact, which emails it to Sohila
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    const name = String(f.get("name") || "").trim();
-    const from = String(f.get("from") || "").trim();
-    const msg = String(f.get("message") || "").trim();
-    const subject = `Project inquiry${name ? ` from ${name}` : ""}`;
-    const body = `${msg}\n\n— ${name}${from ? `\nContact: ${from}` : ""}`;
-    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setSent(true);
+    const form = e.currentTarget;
+    const f = new FormData(form);
+    setStatus("sending");
+    try {
+      const r = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: f.get("name"), email: f.get("email"), message: f.get("message"), company: f.get("company") }),
+      });
+      if (r.status === 429) return setStatus("rate");
+      if (!r.ok) return setStatus("err");
+      setStatus("ok");
+      form.reset();
+    } catch {
+      setStatus("err");
+    }
   };
 
   const items = [
@@ -90,19 +100,23 @@ export default function Contact() {
           </a>
         </div>
 
-        <form onSubmit={submit} className="ct-fade h-fit rounded-3xl border border-accent/30 bg-surface/80 p-6 shadow-[0_0_60px_rgba(139,92,246,.12)] md:p-10">
+        <form onSubmit={submit} className="ct-fade relative h-fit rounded-3xl border border-accent/30 bg-surface/80 p-6 shadow-[0_0_60px_rgba(139,92,246,.12)] md:p-10">
           <h3 className="font-display text-2xl font-bold">{t.formTitle}</h3>
           <p className="mt-2 text-sm text-muted">{t.formIntro}</p>
           <label className="mt-8 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-name">{t.formName}</label>
-          <input id="ct-name" name="name" required autoComplete="name" placeholder="Jane Doe" className="mt-3 w-full rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
-          <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-from">{t.formFrom}</label>
-          <input id="ct-from" name="from" required placeholder="name@example.com or +20 1xx xxx xxxx" className="mt-3 w-full rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
+          <input id="ct-name" name="name" required maxLength={100} autoComplete="name" placeholder="Jane Doe" className="mt-3 w-full rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
+          <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-from">{t.formEmail}</label>
+          <input id="ct-from" name="email" type="email" required maxLength={150} autoComplete="email" dir="ltr" placeholder="name@example.com" className="mt-3 w-full rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
           <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-msg">{t.formMsg}</label>
-          <textarea id="ct-msg" name="message" required rows={5} placeholder="Tell me about your project…" className="mt-3 w-full resize-none rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
-          <button type="submit" className="btn-glow mt-8 w-full rounded-full py-4 text-xs font-extrabold uppercase tracking-[0.25em]">
-            {t.formSend}
+          <textarea id="ct-msg" name="message" required maxLength={3000} rows={5} placeholder="Tell me about your project…" className="mt-3 w-full resize-none rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
+          {/* honeypot for bots, hidden from people */}
+          <input name="company" tabIndex={-1} autoComplete="off" aria-hidden className="absolute -left-[9999px] h-0 w-0 opacity-0" />
+          <button type="submit" disabled={status === "sending"} className="btn-glow mt-8 w-full rounded-full py-4 text-xs font-extrabold uppercase tracking-[0.25em] disabled:opacity-60">
+            {status === "sending" ? t.formSending : t.formSend}
           </button>
-          {sent && <p className="mt-4 text-center text-sm text-accent-soft" role="status">{t.formSent(profile.email)}</p>}
+          <p className={`mt-4 min-h-[1.25rem] text-center text-sm ${status === "ok" ? "text-emerald-400" : "text-rose-400"}`} role="status" aria-live="polite">
+            {status === "ok" ? t.formOk : status === "err" ? t.formErr : status === "rate" ? t.formRate : ""}
+          </p>
         </form>
       </div>
     </section>
@@ -145,7 +159,7 @@ export function Footer() {
             <br />
             <SplitText text={t.closing[1]} className="text-accent" />
           </h2>
-          <a href={`mailto:${profile.email}`} className="btn-glow mt-10 inline-block rounded-full px-10 py-4 text-xs font-extrabold uppercase tracking-[0.25em]">
+          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToTarget("#contact"); setTimeout(() => document.getElementById("ct-name")?.focus({ preventScroll: true }), 1200); }} className="btn-glow mt-10 inline-block rounded-full px-10 py-4 text-xs font-extrabold uppercase tracking-[0.25em]">
             {t.sendMessage}
           </a>
         </div>

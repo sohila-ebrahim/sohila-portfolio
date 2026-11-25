@@ -47,6 +47,11 @@ export const dict2 = {
     // closing
     closing: ["Let's build", "the future."],
     sendMessage: "Send a message",
+    formEmail: "Your email",
+    formSending: "Sending…",
+    formOk: "Thanks! Your message was sent. I'll get back to you soon.",
+    formErr: "Sorry, the message couldn't be sent. Please try WhatsApp or email.",
+    formRate: "Too many messages for now. Please try again later.",
   },
   ar: {
     downloadCv: "تحميل السيرة الذاتية",
@@ -86,5 +91,10 @@ export const dict2 = {
     talkSub: "ونحط النقط عالحروف.",
     closing: ["يلا نبني", "المستقبل."],
     sendMessage: "ابعت رسالة",
+    formEmail: "الإيميل بتاعك",
+    formSending: "بيتبعت…",
+    formOk: "شكراً! رسالتك وصلت، وهرد عليك قريب.",
+    formErr: "حصلت مشكلة والرسالة ما اتبعتتش. جرّب واتساب أو الإيميل.",
+    formRate: "رسايل كتير دلوقتي. جرّب تاني بعد شوية.",
   },
 };
