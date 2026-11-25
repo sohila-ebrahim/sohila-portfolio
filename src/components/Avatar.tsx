@@ -74,6 +74,9 @@ export default function Avatar({ className = "" }: { className?: string }) {
   const wink = mood === "wink";
   const lid = { transformBox: "fill-box", transformOrigin: "50% 0%", transform: `scaleY(${blinking ? 1 : 0})`, transition: "transform 70ms ease-in" } as const;
 
+  const skin = `url(#${gid("skin")})`;
+  const hijab = `url(#${gid("hijab")})`;
+
   return (
     <svg ref={root} viewBox="0 0 320 400" className={className} role="img" aria-label="Cartoon of Sohila Ebrahim">
       <defs>
@@ -81,101 +84,131 @@ export default function Avatar({ className = "" }: { className?: string }) {
           <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.55" />
           <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
         </radialGradient>
-        <linearGradient id={gid("hijab")} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#8d726c" />
-          <stop offset="100%" stopColor="#6b524d" />
+        {/* mauve-taupe hijab like in the photos */}
+        <linearGradient id={gid("hijab")} x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0%" stopColor="#7f6a6e" />
+          <stop offset="100%" stopColor="#5a464b" />
         </linearGradient>
-        <linearGradient id={gid("skin")} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f6d3b8" />
-          <stop offset="100%" stopColor="#ebbb9b" />
-        </linearGradient>
+        <radialGradient id={gid("skin")} cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="#fbe2d1" />
+          <stop offset="100%" stopColor="#efc3a8" />
+        </radialGradient>
         <linearGradient id={gid("top")} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#dfe3f0" />
+          <stop offset="100%" stopColor="#e4e8f2" />
         </linearGradient>
       </defs>
 
       <circle cx="160" cy="190" r="170" fill={`url(#${gid("glow")})`} />
 
       <g className="av-float">
-        {/* body */}
+        {/* body: white peplum blouse with frog-knot closures, brown crossbody bag */}
         <g className="av-body">
-          <path d="M52 400 C56 320 92 290 160 284 C228 290 264 320 268 400 Z" fill={`url(#${gid("top")})`} />
-          {/* peplum folds + buttons */}
-          <path d="M160 300 L160 400" stroke="#cfd4e4" strokeWidth="2" />
-          {[322, 348, 374].map((y) => (
-            <circle key={y} cx="160" cy={y} r="3.2" fill="#c9cede" />
+          <path d="M44 400 C46 330 84 296 160 290 C236 296 274 330 276 400 Z" fill={`url(#${gid("top")})`} />
+          <path d="M70 400 C74 360 84 336 98 322" stroke="#d6dbe8" strokeWidth="2.5" fill="none" />
+          <path d="M250 400 C246 360 236 336 222 322" stroke="#d6dbe8" strokeWidth="2.5" fill="none" />
+          {/* V neckline */}
+          <path d="M136 292 L160 340 L184 292 Z" fill="#dfe3ee" />
+          <path d="M160 340 L160 400" stroke="#cfd5e3" strokeWidth="2" />
+          {/* frog knots */}
+          {[352, 378].map((y) => (
+            <g key={y} stroke="#f4f6fb" strokeWidth="3" fill="none" strokeLinecap="round">
+              <path d={`M146 ${y} q-7 -6 0 -9 q7 3 0 9 z`} />
+              <path d={`M174 ${y} q7 -6 0 -9 q-7 3 0 9 z`} />
+              <path d={`M146 ${y - 4} H174`} stroke="#d0d6e4" strokeWidth="2.5" />
+            </g>
           ))}
-          {/* bag strap */}
-          <path d="M96 300 L222 400" stroke="#6a4630" strokeWidth="9" strokeLinecap="round" />
-          <path d="M96 300 L222 400" stroke="#8a5d40" strokeWidth="3" strokeLinecap="round" />
+          {/* strap across the body to the bag on the hip */}
+          <path d="M104 300 L236 392" stroke="#5b3a26" strokeWidth="9" strokeLinecap="round" />
+          <path d="M104 300 L236 392" stroke="#7b5136" strokeWidth="4" strokeLinecap="round" strokeDasharray="5 5" />
+          <g transform="translate(222 368) rotate(-14)">
+            <rect x="0" y="0" width="48" height="34" rx="10" fill="#efe6d6" />
+            <path d="M0 22 Q24 30 48 22 L48 26 Q48 34 38 34 L10 34 Q0 34 0 26 Z" fill="#6b4029" />
+            <path d="M6 8 H42" stroke="#6b4029" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="40" cy="8" r="2.5" fill="#d4a944" />
+          </g>
         </g>
 
         {/* head */}
         <g className="av-head" style={{ transformOrigin: "160px 290px" }}>
-          {/* hijab back + drape */}
-          <path className="av-strand" d="M62 170 C58 90 104 46 160 46 C216 46 262 90 258 170 C258 230 250 270 238 300 L82 300 C70 270 62 230 62 170 Z" fill={`url(#${gid("hijab")})`} />
-          {/* face */}
-          <ellipse cx="160" cy="172" rx="66" ry="80" fill={`url(#${gid("skin")})`} />
-          {/* hijab frame over forehead */}
-          <path d="M88 150 C92 96 124 74 160 74 C196 74 228 96 232 150 C214 112 190 100 160 100 C130 100 106 112 88 150 Z" fill="#7d635e" />
-          <path d="M96 128 C120 104 200 104 224 128" stroke="#9b817b" strokeWidth="3" fill="none" opacity="0.6" />
-
-          {/* cheeks */}
-          <ellipse cx="118" cy="200" rx="14" ry="8" fill="#f59ab0" opacity={happy ? 0.7 : 0.45} />
-          <ellipse cx="202" cy="200" rx="14" ry="8" fill="#f59ab0" opacity={happy ? 0.7 : 0.45} />
-
-          {/* brows */}
-          <g style={{ transform: happy ? "translateY(-4px)" : "none", transition: "transform .3s" }}>
-            <path d="M112 142 Q128 132 144 140" stroke="#3a2418" strokeWidth="5" strokeLinecap="round" fill="none" />
-            <path d="M176 140 Q192 132 208 142" stroke="#3a2418" strokeWidth="5" strokeLinecap="round" fill="none" />
+          {/* hijab back and the loose end falling over the shoulder */}
+          <path className="av-strand" d="M70 176 C62 96 108 52 162 52 C218 52 262 98 254 178 C250 240 244 282 230 306 L92 306 C78 282 72 236 70 176 Z" fill={hijab} />
+          <path className="av-strand" d="M78 230 C66 270 64 300 76 330 C90 322 104 304 110 280 Z" fill="#5a464b" />
+          {/* round face */}
+          <ellipse cx="160" cy="182" rx="62" ry="70" fill={skin} />
+          {/* hijab framing the forehead, sitting low like in the photos */}
+          <path d="M92 168 C90 108 122 82 160 82 C200 82 232 108 230 168 C222 132 196 114 160 114 C124 114 100 132 92 168 Z" fill={hijab} />
+          {/* fabric texture */}
+          <g stroke="#9a8488" strokeWidth="2" fill="none" opacity="0.45" strokeLinecap="round">
+            <path d="M106 104 C130 90 190 90 214 104" />
+            <path d="M84 150 C80 120 92 96 112 82" />
+            <path d="M236 150 C240 120 228 96 208 82" />
+            <path d="M80 210 C82 240 90 262 100 280" />
+            <path d="M240 210 C238 240 230 262 220 280" />
           </g>
 
-          {/* left eye */}
+          {/* rosy cheeks */}
+          <ellipse cx="122" cy="206" rx="15" ry="9" fill="#f28b9b" opacity={happy ? 0.7 : 0.5} />
+          <ellipse cx="198" cy="206" rx="15" ry="9" fill="#f28b9b" opacity={happy ? 0.7 : 0.5} />
+
+          {/* thick dark brows */}
+          <g style={{ transform: happy ? "translateY(-3px)" : "none", transition: "transform .3s" }}>
+            <path d="M110 148 Q124 138 146 143 L146 148 Q126 144 112 152 Z" fill="#24150e" />
+            <path d="M210 148 Q196 138 174 143 L174 148 Q194 144 208 152 Z" fill="#24150e" />
+          </g>
+
+          {/* left eye: big dark eyes with winged liner and lashes */}
           <g>
-            <ellipse cx="128" cy="166" rx="15" ry={happy ? 11 : 14} fill="#fff" />
+            <path d="M112 178 Q130 148 149 176 Q131 198 112 178 Z" fill="#fff" />
             <g className="av-pupil">
-              <circle cx="128" cy="167" r="9" fill="#4a2c1d" />
-              <circle cx="128" cy="167" r="4.5" fill="#160b06" />
-              <circle cx="131" cy="163" r="2.6" fill="#fff" />
+              <circle cx="131" cy="176" r="10" fill="#3a2215" />
+              <circle cx="131" cy="176" r="5.2" fill="#110805" />
+              <circle cx="134" cy="172.5" r="2.4" fill="#fff" />
             </g>
-            <rect className="av-lid" x="110" y="150" width="36" height="32" fill="#efc4a6" style={lid} />
-            <path d="M111 160 Q128 147 146 160" stroke="#1d110b" strokeWidth="4" strokeLinecap="round" fill="none" />
-            <path d="M144 158 L150 153" stroke="#1d110b" strokeWidth="3" strokeLinecap="round" />
+            <rect className="av-lid" x="110" y="152" width="40" height="42" fill="#f5d2bc" style={lid} />
+            <path d="M150 176 Q130 146 111 177 L103 170" stroke="#120a06" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M115 167 l-5 -4 M120 162 l-3 -6 M127 159 l-1 -6" stroke="#120a06" strokeWidth="2" strokeLinecap="round" />
           </g>
 
           {/* right eye (winks) */}
-          <path d="M174 168 Q192 178 210 168" stroke="#1d110b" strokeWidth="4.5" strokeLinecap="round" fill="none" opacity={wink ? 1 : 0} />
+          <path d="M173 178 Q190 186 206 176" stroke="#120a06" strokeWidth="4" strokeLinecap="round" fill="none" opacity={wink ? 1 : 0} />
           <g opacity={wink ? 0 : 1}>
-              <ellipse cx="192" cy="166" rx="15" ry={happy ? 11 : 14} fill="#fff" />
-              <g className="av-pupil">
-                <circle cx="192" cy="167" r="9" fill="#4a2c1d" />
-                <circle cx="192" cy="167" r="4.5" fill="#160b06" />
-                <circle cx="195" cy="163" r="2.6" fill="#fff" />
-              </g>
-              <rect className="av-lid" x="174" y="150" width="36" height="32" fill="#efc4a6" style={lid} />
-              <path d="M174 160 Q192 147 209 160" stroke="#1d110b" strokeWidth="4" strokeLinecap="round" fill="none" />
-              <path d="M208 158 L214 153" stroke="#1d110b" strokeWidth="3" strokeLinecap="round" />
+            <path d="M208 178 Q190 148 171 176 Q189 198 208 178 Z" fill="#fff" />
+            <g className="av-pupil">
+              <circle cx="189" cy="176" r="10" fill="#3a2215" />
+              <circle cx="189" cy="176" r="5.2" fill="#110805" />
+              <circle cx="192" cy="172.5" r="2.4" fill="#fff" />
+            </g>
+            <rect className="av-lid" x="170" y="152" width="40" height="42" fill="#f5d2bc" style={lid} />
+            <path d="M170 176 Q190 146 209 177 L217 170" stroke="#120a06" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M205 167 l5 -4 M200 162 l3 -6 M193 159 l1 -6" stroke="#120a06" strokeWidth="2" strokeLinecap="round" />
           </g>
 
-          {/* nose */}
-          <path d="M160 180 Q156 196 162 200" stroke="#d39a7c" strokeWidth="3" strokeLinecap="round" fill="none" />
+          {/* small rounded nose */}
+          <path d="M156 198 Q151 208 158 211 Q164 212 166 208" stroke="#d99b80" strokeWidth="3" strokeLinecap="round" fill="none" />
 
-          {/* mouth */}
+          {/* full red lips */}
           {happy ? (
             <g>
-              <path d="M136 214 Q160 246 184 214 Z" fill="#b8283a" />
-              <path d="M142 216 Q160 224 178 216 L176 220 Q160 228 144 220 Z" fill="#fff" />
+              <path d="M138 222 Q160 252 182 222 Q160 228 138 222 Z" fill="#c2303d" />
+              <path d="M143 224 Q160 230 177 224 L175 229 Q160 234 145 229 Z" fill="#fff" />
             </g>
           ) : wink ? (
-            <path d="M140 218 Q164 234 184 212" stroke="#c8323f" strokeWidth="6" strokeLinecap="round" fill="none" />
+            <g>
+              <path d="M142 225 Q156 219 162 222 Q170 217 182 220 Q172 238 156 236 Q146 234 142 225 Z" fill="#d23f4b" />
+              <path d="M143 225 Q162 229 181 220" stroke="#a52a35" strokeWidth="1.8" fill="none" />
+            </g>
           ) : (
-            <path d="M140 216 Q160 232 180 216" stroke="#c8323f" strokeWidth="6" strokeLinecap="round" fill="none" />
+            <g>
+              <path d="M141 224 Q151 217 160 221 Q169 217 179 224 Q170 238 160 238 Q150 238 141 224 Z" fill="#d23f4b" />
+              <path d="M141 224 Q160 230 179 224" stroke="#a52a35" strokeWidth="1.8" fill="none" />
+              <ellipse cx="166" cy="230" rx="5" ry="2" fill="#fff" opacity="0.35" />
+            </g>
           )}
 
-          {/* hijab wrap under chin */}
-          <path d="M96 232 C116 268 204 268 224 232 C232 262 214 292 160 296 C106 292 88 262 96 232 Z" fill="#7a605b" />
-          <path d="M108 262 C130 280 190 280 212 262" stroke="#947a74" strokeWidth="3" fill="none" opacity="0.6" />
+          {/* hijab wrapped under the chin */}
+          <path d="M98 238 C116 274 204 274 222 238 C230 270 214 300 160 304 C106 300 90 270 98 238 Z" fill={hijab} />
+          <path d="M110 268 C132 288 188 288 210 268" stroke="#9a8488" strokeWidth="2" fill="none" opacity="0.5" />
         </g>
       </g>
     </svg>
