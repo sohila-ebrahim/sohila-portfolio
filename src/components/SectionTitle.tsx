@@ -22,11 +22,11 @@ export default function SectionTitle({ text, accent, eyebrow, className = "" }: 
   return (
     <div ref={ref} className={className}>
       {eyebrow && (
-        <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-muted">
-          <span className="inline-block h-2 w-2 rounded-full bg-accent" /> {eyebrow}
+        <p className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em]">
+          <span className="text-accent">✸</span> {eyebrow}
         </p>
       )}
-      <h2 className="font-display text-5xl font-bold uppercase leading-[0.95] md:text-7xl lg:text-8xl">
+      <h2 className="font-display text-[13vw] font-extrabold uppercase leading-[1.1] md:text-[8vw] lg:text-[117px]">
         <SplitText text={text} />
         {accent && (
           <>
