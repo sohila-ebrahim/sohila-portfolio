@@ -62,11 +62,23 @@ export default function Portfolio() {
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+      // scroll-driven, so it also runs when the OS asks for less motion (it only moves with the visitor's own scrolling)
+      mm.add("(min-width: 768px)", () => {
         const el = track.current!;
         el.style.scrollSnapType = "none";
         el.style.scrollBehavior = "auto";
         const distance = () => el.scrollWidth - el.clientWidth;
+        // each card grows in and fades up as it enters from the right edge
+        const cards = Array.from(el.querySelectorAll<HTMLElement>(".pf-card"));
+        const reveal = () => {
+          const vw = window.innerWidth;
+          cards.forEach((c) => {
+            const left = c.getBoundingClientRect().left;
+            const k = Math.min(1, Math.max(0, (vw - left) / (vw * 0.3)));
+            c.style.opacity = String(0.25 + 0.75 * k);
+            c.style.transform = `translateY(${(1 - k) * 40}px) scale(${0.86 + 0.14 * k})`;
+          });
+        };
         pin.current = ScrollTrigger.create({
           trigger: ref.current,
           start: "top top",
@@ -74,10 +86,15 @@ export default function Portfolio() {
           pin: true,
           scrub: true,
           invalidateOnRefresh: true,
-          onUpdate: (self) => { el.scrollLeft = self.progress * distance(); },
+          onUpdate: (self) => {
+            el.scrollLeft = self.progress * distance();
+            reveal();
+          },
+          onRefresh: reveal,
         });
         return () => {
           pin.current = null;
+          cards.forEach((c) => { c.style.opacity = ""; c.style.transform = ""; });
           el.style.scrollSnapType = "";
           el.style.scrollBehavior = "";
         };
@@ -93,7 +110,7 @@ export default function Portfolio() {
     if (!el) return;
     el.scrollLeft = 0;
     onScroll();
-    gsap.fromTo(el.querySelectorAll(".pf-card"), { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, stagger: 0.05, ease: "power3.out" });
+    if (window.innerWidth < 768) gsap.fromTo(el.querySelectorAll(".pf-card"), { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, stagger: 0.05, ease: "power3.out", clearProps: "transform,opacity" });
   }, [filter, onScroll]);
 
   // mouse drag to scroll (touch already swipes natively)
@@ -187,7 +204,7 @@ export default function Portfolio() {
           <article
             key={p.slug}
             dir={lang === "ar" ? "rtl" : "ltr"}
-            className="pf-card group flex w-[82vw] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-bg/70 transition duration-500 hover:-translate-y-1 hover:border-accent/50 hover:shadow-[0_20px_60px_rgba(139,92,246,.18)] sm:w-[440px]"
+            className="pf-card group flex w-[82vw] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-bg/70 transition-[border-color,box-shadow] duration-500 will-change-transform hover:border-accent/50 hover:shadow-[0_20px_60px_rgba(139,92,246,.18)] sm:w-[440px]"
           >
             <Link href={`/projects/${p.slug}`} draggable={false} className="relative block aspect-[16/10] overflow-hidden">
               <div className="h-full w-full transition-transform duration-700 group-hover:scale-105">

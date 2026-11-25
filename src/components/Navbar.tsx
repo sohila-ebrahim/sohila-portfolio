@@ -72,7 +72,9 @@ export default function Navbar() {
     const el = dock.current;
     if (!el || prefersReduced() || window.matchMedia("(pointer: coarse)").matches) return;
     const icons = Array.from(el.querySelectorAll<HTMLElement>(".dock-icon"));
-    const sc = icons.map((i) => gsap.quickTo(i, "scale", { duration: 0.25, ease: "power3" }));
+    const sx = icons.map((i) => gsap.quickTo(i, "scaleX", { duration: 0.25, ease: "power3" }));
+    const sy = icons.map((i) => gsap.quickTo(i, "scaleY", { duration: 0.25, ease: "power3" }));
+    const sc = icons.map((_, k) => (v: number) => { sx[k](v); sy[k](v); });
     const ty = icons.map((i) => gsap.quickTo(i, "y", { duration: 0.25, ease: "power3" }));
     const move = (e: PointerEvent) => {
       icons.forEach((icon, k) => {
