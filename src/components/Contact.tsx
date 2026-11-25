@@ -7,6 +7,9 @@ import TechIcon from "./TechIcon";
 import { useLang } from "@/lib/lang";
 import { scrollToTarget } from "@/lib/scroll";
 
+/** FormSubmit target: her address for now; replace with the alias FormSubmit emails after activation. */
+const FORMSUBMIT_TARGET = "sohilaebrahim6789@gmail.com";
+
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err" | "rate">("idle");
@@ -20,30 +23,47 @@ export default function Contact() {
     { scope: ref }
   );
 
-  // sends the form to /api/contact, which emails it to Sohila
+  // sends the form straight from the browser to FormSubmit, which emails it to Sohila.
+  // After she activates the form, FORMSUBMIT_TARGET can be swapped for the random alias FormSubmit sends her.
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const f = new FormData(form);
+    const name = String(f.get("name") ?? "").trim().slice(0, 100);
+    const email = String(f.get("email") ?? "").trim().slice(0, 150);
+    const message = String(f.get("message") ?? "").trim().slice(0, 3000);
+    if (!name || !email || !message) return setStatus("err");
+    // simple client-side flood guard: one message every 30 seconds
+    const last = Number(sessionStorage.getItem("ct-last") || 0);
+    if (Date.now() - last < 30_000) return setStatus("rate");
     setStatus("sending");
+    const fallback = () => {
+      // email service unavailable: open the visitor's own email app so the message isn't lost
+      const subject = `New message from your portfolio - ${name}`;
+      window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`${message}\n\n— ${name} (${email})`)}`;
+      setStatus("err");
+    };
     try {
-      const r = await fetch("/api/contact", {
+      const r = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_TARGET}`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name: f.get("name"), email: f.get("email"), message: f.get("message"), company: f.get("company") }),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _subject: `New message from your portfolio - ${name}`,
+          _template: "table",
+          _captcha: "false",
+          _replyto: email,
+          _honey: String(f.get("_honey") ?? ""),
+        }),
       });
-      if (r.status === 429) return setStatus("rate");
-      if (!r.ok) {
-        // email service unavailable: fall back to the visitor's own email app so the message isn't lost
-        const subject = `New message from your portfolio - ${f.get("name")}`;
-        const body = `${f.get("message")}\n\n— ${f.get("name")} (${f.get("email")})`;
-        window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        return setStatus("err");
-      }
+      if (!r.ok) return fallback();
+      sessionStorage.setItem("ct-last", String(Date.now()));
       setStatus("ok");
       form.reset();
     } catch {
-      setStatus("err");
+      fallback();
     }
   };
 
@@ -116,7 +136,7 @@ export default function Contact() {
           <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-msg">{t.formMsg}</label>
           <textarea id="ct-msg" name="message" required maxLength={3000} rows={5} placeholder="Tell me about your project…" className="mt-3 w-full resize-none rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
           {/* honeypot for bots, hidden from people */}
-          <input name="company" tabIndex={-1} autoComplete="off" aria-hidden className="absolute -left-[9999px] h-0 w-0 opacity-0" />
+          <input name="_honey" tabIndex={-1} autoComplete="off" aria-hidden className="absolute -left-[9999px] h-0 w-0 opacity-0" />
           <button type="submit" disabled={status === "sending"} className="btn-glow mt-8 w-full rounded-full py-4 text-xs font-extrabold uppercase tracking-[0.25em] disabled:opacity-60">
             {status === "sending" ? t.formSending : t.formSend}
           </button>
