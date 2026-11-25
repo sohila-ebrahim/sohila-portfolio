@@ -7,4 +7,8 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
+/** true when the visitor asked the OS for less motion */
+export const prefersReduced = () =>
+  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export { gsap, ScrollTrigger, useGSAP };
