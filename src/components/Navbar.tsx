@@ -195,6 +195,7 @@ export default function Navbar() {
           ))}
         </ul>
         <div className="relative mt-12 flex flex-wrap gap-6 text-sm text-muted">
+          <a href={lang === "ar" ? "/cv/Sohila-Ebrahim-CV-ar.pdf" : "/cv/Sohila-Ebrahim-CV.pdf"} download tabIndex={open ? 0 : -1} className="rounded-full border border-accent px-4 py-1.5 font-semibold text-fg hover:bg-accent">{t.downloadCv} ↓</a>
           <a href={`mailto:${profile.email}`} tabIndex={open ? 0 : -1} className="hover:text-fg">{profile.email}</a>
           <a href={profile.whatsapp} target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1} className="hover:text-fg" dir="ltr">{profile.phone}</a>
           {profile.socials.filter((s) => s.label === "GitHub").map((s) => (

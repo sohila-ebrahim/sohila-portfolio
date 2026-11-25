@@ -135,3 +135,7 @@ html[lang="ar"] .uppercase { text-transform: none; }
   filter: drop-shadow(0 10px 30px rgba(18, 11, 36, 0.55));
 }
 @media (prefers-reduced-motion: reduce) { .text-brand { animation: none; } }
+
+/* CV page section headings */
+.cv-h { font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: #7c3aed; border-bottom: 1px solid #e4e0ee; padding-bottom: 2px; }
+.cv-page, .cv-page * { cursor: auto; }

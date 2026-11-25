@@ -28,7 +28,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
     <main className="px-site pb-20 pt-32 md:pt-36">
       <Link href="/#portfolio" className="text-sm text-muted link-underline">← Back to all projects</Link>
       <Reveal className="mt-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent-soft">{p.category} · {p.kind} · {p.year}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent-soft">{p.category} · {p.kind} · {p.year}{p.country && <span className="ms-2 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-wider text-fg">{p.country}</span>}</p>
         <h1 className="mt-4 max-w-6xl font-display text-5xl font-bold uppercase leading-[0.95] md:text-8xl">{p.title}</h1>
         <div className="mt-8">
           <ProjectLinks project={p} details={false} />

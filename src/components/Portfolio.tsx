@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useLang } from "@/lib/lang";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { scrollToTarget } from "@/lib/scroll";
-import { certificates, projectKinds, projects } from "@/data/portfolio";
+import { achievements, certificates, projectKinds, projects, stack } from "@/data/portfolio";
+import TechIcon from "./TechIcon";
 import ProjectImage from "./ProjectImage";
 import ProjectLinks from "./ProjectLinks";
 
@@ -16,6 +17,7 @@ export default function Portfolio() {
   const ref = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState("All");
+  const [tab, setTab] = useState<"projects" | "certificates" | "achievements" | "stack">("projects");
   const { t, lang } = useLang();
   const pin = useRef<ScrollTrigger | null>(null);
   const [index, setIndex] = useState(0);
@@ -63,6 +65,7 @@ export default function Portfolio() {
     () => {
       const mm = gsap.matchMedia();
       // scroll-driven, so it also runs when the OS asks for less motion (it only moves with the visitor's own scrolling)
+      if (tab !== "projects") return () => mm.revert();
       mm.add("(min-width: 768px)", () => {
         const el = track.current!;
         el.style.scrollSnapType = "none";
@@ -101,7 +104,7 @@ export default function Portfolio() {
       });
       return () => mm.revert();
     },
-    { scope: ref, dependencies: [filter], revertOnUpdate: true }
+    { scope: ref, dependencies: [filter, tab], revertOnUpdate: true }
   );
 
   // re-fill on filter change: back to the first card and animate the cards in
@@ -173,6 +176,47 @@ export default function Portfolio() {
         </div>
       </div>
 
+      <div role="tablist" aria-label="Portfolio" className="px-site mt-8 flex flex-wrap gap-2">
+        {([
+          ["projects", t.tabProjects, projects.length],
+          ...(certificates.length ? [["certificates", t.tabCertificates, certificates.length]] : []),
+          ...(achievements.length ? [["achievements", t.tabAchievements, achievements.length]] : []),
+          ["stack", t.tabStack, stack.reduce((n, g) => n + g.items.length, 0)],
+        ] as [typeof tab, string, number][]).map(([id, label, n]) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={tab === id}
+            onClick={() => setTab(id)}
+            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${tab === id ? "bg-accent text-white shadow-[0_0_24px_rgba(139,92,246,.5)]" : "border border-line text-muted hover:text-fg"}`}
+          >
+            {label} <span className="opacity-60">{n}</span>
+          </button>
+        ))}
+      </div>
+
+      {tab === "stack" && (
+        <div className="px-site mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {stack.flatMap((g) => g.items).map((it) => (
+            <div key={it.name} className="flex items-center gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3 text-sm font-bold" dir="ltr">
+              <TechIcon name={it.name} icon={it.icon} size={20} /> {it.name}
+            </div>
+          ))}
+        </div>
+      )}
+      {tab === "achievements" && (
+        <div className="px-site mt-10 grid gap-4 md:grid-cols-2">
+          {achievements.map((a) => (
+            <div key={a.title} className="rounded-2xl border border-line bg-bg/60 p-6">
+              <p className="text-xs uppercase tracking-[0.2em] text-accent-soft">{a.year}</p>
+              <p className="mt-2 font-display text-xl font-semibold">{a.title}</p>
+              <p className="mt-1 text-sm text-muted">{a.detail}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className={tab === "projects" ? "" : "hidden"}>
       <div className="px-site mt-10 flex flex-wrap gap-2" role="toolbar" aria-label="Filter projects">
         {["All", ...kinds].map((k) => {
           const n = k === "All" ? projects.length : projects.filter((p) => p.kind === k).length;
@@ -215,6 +259,7 @@ export default function Portfolio() {
             <div className="flex flex-1 flex-col p-6">
               <div className="flex flex-wrap gap-1.5">
                 <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent-soft">{p.kind}</span>
+                {p.country && <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold">{p.country}</span>}
                 {p.tags.slice(0, 3).map((t) => (
                   <span key={t} className="rounded-full border border-line px-3 py-1 text-xs text-muted">{t}</span>
                 ))}
@@ -246,7 +291,9 @@ export default function Portfolio() {
         </span>
       </div>
 
-      {certificates.length > 0 && (
+      </div>
+
+      {tab === "certificates" && certificates.length > 0 && (
         <div className="px-site mt-16 grid gap-4 md:grid-cols-2">
           {certificates.map((c) => (
             <a key={c.title} href={c.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-line bg-bg/60 p-6 transition hover:border-accent">

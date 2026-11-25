@@ -142,4 +142,7 @@ export const dict = {
   },
 };
 
-export type Dict = (typeof dict)["en"];
+import { dict2 } from "./i18n2";
+
+export type Dict = (typeof dict)["en"] & (typeof dict2)["en"];
+export const fullDict = { en: { ...dict.en, ...dict2.en }, ar: { ...dict.ar, ...dict2.ar } };

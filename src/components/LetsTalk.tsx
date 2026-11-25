@@ -4,6 +4,7 @@ import { gsap, prefersReduced, useGSAP } from "@/lib/gsap";
 import { scrollToTarget } from "@/lib/scroll";
 import { stack } from "@/data/portfolio";
 import TechIcon from "./TechIcon";
+import { useLang } from "@/lib/lang";
 
 // pick logos that exist, spread around an ellipse
 const ICONS = stack.flatMap((g) => g.items).filter((t) => t.icon).filter((t, i, a) => a.findIndex((x) => x.icon === t.icon) === i).slice(0, 18);
@@ -16,6 +17,7 @@ const POS = ICONS.map((_, i) => {
 /** Big "Let's talk" call to action with floating tech icons that scatter away from the cursor. */
 export default function LetsTalk() {
   const ref = useRef<HTMLElement>(null);
+  const { t } = useLang();
 
   useGSAP(
     () => {
@@ -89,16 +91,16 @@ export default function LetsTalk() {
         </div>
       ))}
       <div className="relative z-10 text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted">Got an idea?</p>
-        <h2 className="lt-title mt-4 font-display text-[18vw] font-extrabold uppercase leading-[0.85] md:text-[12vw]">
-          <span className="inline-block overflow-hidden align-bottom"><span className="lt-w inline-block">Let&apos;s</span></span>{" "}
-          <span className="inline-block overflow-hidden align-bottom"><span className="lt-w inline-block text-accent">talk</span></span>
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted">{t.idea}</p>
+        <h2 className="lt-title mt-4 font-heavy text-[15vw] uppercase leading-[0.95] md:text-[9vw]">
+          <span className="inline-block overflow-hidden align-bottom"><span className="lt-w inline-block text-brand">{t.talkNow}</span></span>
         </h2>
+        <p className="mt-4 font-display text-2xl text-fg/80 md:text-4xl">{t.talkSub}</p>
         <button
           onClick={() => scrollToTarget("#contact")}
           className="lt-btn btn-glow mt-10 rounded-full px-12 py-5 text-sm font-extrabold uppercase tracking-[0.25em]"
         >
-          Start a project →
+          {t.startProject} →
         </button>
       </div>
     </section>

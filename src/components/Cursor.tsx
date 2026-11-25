@@ -32,6 +32,7 @@ export default function Cursor() {
     <div
       ref={dot}
       aria-hidden
+      data-floating
       className="pointer-events-none fixed left-0 top-0 z-[90] hidden h-4 w-4 rounded-full bg-accent mix-blend-difference md:block"
     />
   );

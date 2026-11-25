@@ -5,6 +5,7 @@ import { LOADED_EVENT, scrollToTarget } from "@/lib/scroll";
 import { useLang } from "@/lib/lang";
 import HeroCards from "./HeroCards";
 import IdBadge from "./IdBadge";
+import Signature from "./Signature";
 
 /**
  * Reference-style hero: one big rounded violet card, the name split on both sides
@@ -97,8 +98,11 @@ export default function Hero() {
           <IdBadge width={badge.w} rope={badge.rope} height="100%" swing glow />
         </div>
 
+        {/* handwritten signature under the first name (desktop) */}
+        <Signature className="pointer-events-none absolute start-[5%] top-[40%] z-20 hidden w-[22vw] max-w-[340px] md:block" />
+
         {/* CTA pill */}
-        <div className="h-fade absolute bottom-[5%] left-0 right-0 z-30 flex justify-center">
+        <div className="h-fade absolute bottom-[5%] left-0 right-0 z-30 flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={() => scrollToTarget("#contact")}
             className="group flex items-center gap-3 rounded-full bg-white py-2 pe-2 ps-6 text-base font-bold text-[#140f22] shadow-[0_15px_40px_rgba(0,0,0,.35)] transition-transform hover:scale-105"
@@ -108,6 +112,13 @@ export default function Hero() {
               →
             </span>
           </button>
+          <a
+            href={lang === "ar" ? "/cv/Sohila-Ebrahim-CV-ar.pdf" : "/cv/Sohila-Ebrahim-CV.pdf"}
+            download
+            className="rounded-full border border-white/40 bg-white/10 px-5 py-3.5 text-sm font-bold backdrop-blur transition hover:bg-white hover:text-[#140f22]"
+          >
+            {t.downloadCv} ↓
+          </a>
         </div>
       </div>
 

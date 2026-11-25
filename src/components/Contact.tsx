@@ -133,7 +133,7 @@ export function Footer() {
   return (
     <footer ref={ref} className="relative flex w-full flex-col overflow-hidden border-t border-white/5 bg-surface pb-12 pt-32">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-10 select-none overflow-hidden">
-        <div className="ft-marquee flex w-max whitespace-nowrap font-display text-[20vw] font-extrabold uppercase leading-none text-white/[0.04]">
+        <div className="ft-marquee flex w-max whitespace-nowrap font-heavy text-[20vw] uppercase leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(167,139,250,0.22)]">
           <span>{name.repeat(3)}</span>
           <span>{name.repeat(3)}</span>
         </div>
@@ -141,12 +141,12 @@ export function Footer() {
       <div className="px-site relative grid gap-12 md:grid-cols-[1.4fr_1fr] md:items-end">
         <div>
           <h2 className="ft-title font-display text-[14vw] font-bold uppercase leading-[0.95] md:text-[8vw]">
-            <SplitText text={t.footerTitle[0]} />
+            <SplitText text={t.closing[0]} />
             <br />
-            <SplitText text={t.footerTitle[1]} className="text-accent" />
+            <SplitText text={t.closing[1]} className="text-accent" />
           </h2>
           <a href={`mailto:${profile.email}`} className="btn-glow mt-10 inline-block rounded-full px-10 py-4 text-xs font-extrabold uppercase tracking-[0.25em]">
-            {t.startProject}
+            {t.sendMessage}
           </a>
         </div>
         <div className="space-y-8 md:text-end">

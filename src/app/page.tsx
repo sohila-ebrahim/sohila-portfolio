@@ -1,14 +1,16 @@
 import Preloader from "@/components/Preloader";
 import Hero from "@/components/Hero";
+import { NowListening, ServiceLetters, Stats, Statement, Tiles, WhyWaste } from "@/components/V4Sections";
 import Services from "@/components/Services";
 import Marquee from "@/components/Marquee";
 import Experience from "@/components/Experience";
-import TechStack from "@/components/TechStack";
 import FeaturedProjects from "@/components/FeaturedProjects";
-import About from "@/components/About";
 import Portfolio from "@/components/Portfolio";
-import LetsTalk from "@/components/LetsTalk";
+import ProjectsList from "@/components/ProjectsList";
+import TechStack from "@/components/TechStack";
+import About from "@/components/About";
 import Testimonials from "@/components/Testimonials";
+import LetsTalk from "@/components/LetsTalk";
 import Contact, { Footer } from "@/components/Contact";
 import { testimonials } from "@/data/portfolio";
 
@@ -18,14 +20,21 @@ export default function Home() {
       <main>
         <Preloader />
         <Hero />
+        <Stats />
+        <Statement />
+        <Tiles />
+        <ServiceLetters />
         <Services />
         <Marquee />
         <Experience />
-        <TechStack />
         <FeaturedProjects />
-        <About />
         <Portfolio />
+        <ProjectsList />
+        <TechStack />
+        <About />
+        <NowListening />
         {testimonials.length > 0 && <Testimonials />}
+        <WhyWaste />
         <LetsTalk />
         <Contact />
       </main>

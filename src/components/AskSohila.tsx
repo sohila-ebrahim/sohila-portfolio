@@ -37,7 +37,7 @@ export default function AskSohila() {
   };
 
   return (
-    <div className="fixed bottom-5 start-4 z-40 md:bottom-8 md:start-8" data-lenis-prevent>
+    <div data-floating className="fixed bottom-5 start-4 z-40 md:bottom-8 md:start-8" data-lenis-prevent>
       {open && (
         <div className="absolute bottom-[72px] start-0 flex h-[min(520px,70svh)] w-[min(370px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-accent/30 bg-[#110e1b]/95 shadow-[0_30px_80px_rgba(0,0,0,.6),0_0_40px_rgba(139,92,246,.2)] backdrop-blur-xl" role="dialog" aria-label={t.ask}>
           <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">

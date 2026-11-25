@@ -25,6 +25,8 @@ export type Project = {
   /** false when the site refuses to load inside an iframe (X-Frame-Options / CSP) */
   embeddable?: boolean;
   featured?: boolean;
+  /** client country, shown as a small tag */
+  country?: "USA" | "UAE" | "Egypt";
 };
 
 export const profile = {
@@ -33,11 +35,13 @@ export const profile = {
   shortName: "SOHILA",
   role: "Full Stack Developer",
   roles: ["Full Stack Developer", "Front-end Engineer", "Creative Developer"],
-  location: "Egypt",
+  location: "Sadat City, Egypt",
   availability: "Available for work & freelance",
   signature: "Sohila Ebrahim",
   intro:
     "Full stack developer building fast, scalable web and mobile products, from polished animated front-ends to solid back-ends and dashboards.",
+  summary:
+    "Third-year Software Engineering student at Delta Technological University and Full Stack Software Developer building websites, dashboards and web apps remotely for clients in the USA and the UAE.",
   bio: [
     "I'm a full stack developer who ships real products for real businesses: roadside-assistance platforms with live dispatch, chauffeur booking apps, restaurants with online ordering, real-estate sites and immersive 3D brand experiences.",
     "I care about the details users feel: fast loading, smooth motion, clear flows and code that stays easy to grow. From the first sketch to deployment, I handle the front-end, the back-end and everything in between.",
@@ -89,27 +93,41 @@ export const services = [
 
 export const experience = [
   {
-    role: "Full Stack Developer",
-    company: "Freelance & client projects",
-    period: "2026 — Present",
+    role: "Full Stack Software Developer",
+    company: "UAE clients · Remote",
+    period: "2025 — Present",
+    points: ["AJH Marketing (ajh.marketing): agency website for a marketing company working across the UAE and beyond."],
+  },
+  {
+    role: "Full Stack Software Developer",
+    company: "USA clients (Texas, Dallas–Fort Worth and more) · Remote",
+    period: "2023 — 2025",
     points: [
-      "Delivered 30+ websites, web apps, mobile apps and APIs for clients in the US, Egypt, the Gulf and the UK.",
-      "Built a full roadside-assistance platform (public site, GPS request flow, live driver tracking, dispatch dashboard).",
-      "Shipped a chauffeur booking ecosystem: website, customer app, driver app, dispatch dashboard and back-end API.",
-      "Integrated payments and operations tools: Stripe, Clover POS, Twilio SMS, Resend email and Supabase.",
+      "TRA — Texas Roadside Assistance: platform with a GPS request flow, live driver tracking and a dispatch dashboard.",
+      "OHA Roadside Assistance, Texas Battery Replacement, LCT Universal executive transportation and TRAQQ (Dallas–Fort Worth).",
+      "Restaurants: Old Damascus (online ordering with Clover POS), Salam Juice & Mutbaq and Al Reem Halal.",
+      "4D Lifestyle, Velora, Westway Collision, Budget Floors N Walls, 64West Building Materials, Foundex Fencing, Dr. Monzer Allan, Altazaj, El Adl Export and Denisse Carrera.",
     ],
   },
   {
-    role: "Web Developer",
-    company: "DevWare — software studio",
-    period: "2025 — 2026",
-    points: [
-      "Built and launched real-estate, restaurant, education and corporate websites for Egyptian and Gulf brands.",
-      "Developed internal systems: CRM / ERP, clinic and radiology platforms and a real-estate sales system.",
-      "Focused on bilingual (Arabic / English) layouts, performance and SEO.",
-    ],
+    role: "Full Stack Software Developer",
+    company: "DevWare · Egypt",
+    period: "2023 — Present",
+    points: ["DevWare studio website (bilingual EN / AR) and Al Ola Developments real-estate website, plus internal systems for clinics, radiology centers, real estate and CRM / ERP."],
   },
 ];
+
+export const education = [
+  { degree: "Bachelor of Software Engineering (in progress)", school: "Delta Technological University", period: "2023 — 2027" },
+  { degree: "", school: "October Technological University", period: "2022 — 2023" },
+];
+
+export const languages = [
+  { name: "Arabic", level: "Native" },
+  { name: "English", level: "" },
+];
+
+export const expertise = ["Application Development", "Web Design", "Desktop Apps"];
 
 const d = "2026";
 
@@ -129,6 +147,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/sohilaebrahim00/4d-life-style",
     embeddable: false,
     featured: true,
+    country: "USA",
   },
   {
     slug: "lct-universal",
@@ -144,6 +163,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/sohilaebrahim00/lct",
     embeddable: false,
     featured: true,
+    country: "USA",
   },
   {
     slug: "oha-roadside",
@@ -158,6 +178,7 @@ export const projects: Project[] = [
     liveUrl: "https://www.oha-roadside.com",
     embeddable: true,
     featured: true,
+    country: "USA",
   },
   {
     slug: "alola-developments",
@@ -171,6 +192,7 @@ export const projects: Project[] = [
     liveUrl: "https://www.aloladevelopments.com",
     embeddable: true,
     featured: true,
+    country: "Egypt",
   },
   {
     slug: "old-damascus",
@@ -186,6 +208,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/sohilaebrahim00/old-damascus",
     embeddable: false,
     featured: true,
+    country: "USA",
   },
   {
     slug: "tra-roadside",
@@ -200,6 +223,7 @@ export const projects: Project[] = [
     liveUrl: "https://www.txroadsideassistance.com",
     githubUrl: "https://github.com/sohilaebrahim00/tra-roadside",
     embeddable: true,
+    country: "USA",
   },
   {
     slug: "salam-restaurant",
@@ -212,6 +236,7 @@ export const projects: Project[] = [
     image: "/projects/salam-restaurant.webp",
     liveUrl: "https://salamtx.com",
     embeddable: true,
+    country: "USA",
   },
   {
     slug: "dr-monzer-allan",
@@ -225,6 +250,7 @@ export const projects: Project[] = [
     liveUrl: "https://drmonzerallan.netlify.app",
     githubUrl: "https://github.com/sohilaebrahim00/drmonzerallancom-new",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "velora",
@@ -237,6 +263,7 @@ export const projects: Project[] = [
     image: "/projects/velora.webp",
     liveUrl: "https://velora-six-rho.vercel.app",
     embeddable: true,
+    country: "USA",
   },
   {
     slug: "ajh-marketing",
@@ -249,6 +276,7 @@ export const projects: Project[] = [
     image: "/projects/ajh-marketing.webp",
     liveUrl: "https://ajh.marketing",
     embeddable: true,
+    country: "UAE",
   },
   {
     slug: "westway-collision",
@@ -261,6 +289,7 @@ export const projects: Project[] = [
     image: "/projects/westway.webp",
     liveUrl: "https://collisionwestway.com",
     embeddable: true,
+    country: "USA",
   },
   {
     slug: "budget-floors-n-walls",
@@ -273,6 +302,7 @@ export const projects: Project[] = [
     image: "/projects/budget-floors-n-walls.webp",
     liveUrl: "https://budgetfloorsnwalls.com",
     embeddable: true,
+    country: "USA",
   },
   {
     slug: "traqq",
@@ -285,6 +315,7 @@ export const projects: Project[] = [
     image: "/projects/traqq.webp",
     liveUrl: "https://mytraqq.com",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "texas-battery-replacement",
@@ -297,6 +328,7 @@ export const projects: Project[] = [
     image: "/projects/texas-battery-replacement.webp",
     liveUrl: "https://texasbatteryreplacement.com",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "64west-store",
@@ -310,6 +342,7 @@ export const projects: Project[] = [
     image: "/projects/64west-store.webp",
     liveUrl: "https://www.64westbm.com",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "foundex-fencing",
@@ -322,6 +355,7 @@ export const projects: Project[] = [
     image: "/projects/foundex-fencing.webp",
     liveUrl: "https://foundex.solutions",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "altazaj",
@@ -334,6 +368,7 @@ export const projects: Project[] = [
     image: "/projects/altazaj.webp",
     liveUrl: "https://altazaj-egy.com",
     embeddable: true,
+    country: "USA",
   },
   {
     slug: "denisse-carrera",
@@ -345,6 +380,7 @@ export const projects: Project[] = [
     tags: ["Responsive", "Netlify"],
     liveUrl: "https://denissecarrera.netlify.app/",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "devware-website",
@@ -357,6 +393,7 @@ export const projects: Project[] = [
     image: "/projects/devware-website.webp",
     liveUrl: "https://devware-website.netlify.app",
     embeddable: false,
+    country: "Egypt",
   },
   {
     slug: "64west-app",
@@ -369,6 +406,7 @@ export const projects: Project[] = [
     image: "/projects/64west-app.webp",
     liveUrl: "https://64west.netlify.app",
     embeddable: false,
+    country: "USA",
   },
   {
     slug: "physio-system",
@@ -379,6 +417,7 @@ export const projects: Project[] = [
     description: "Clinic management: patients, sessions, schedules, therapists and billing.",
     tags: ["Dashboard", "Booking", "Reports"],
     image: "/projects/sys-physio.webp",
+    country: "Egypt",
   },
   {
     slug: "radiology-platform",
@@ -389,6 +428,7 @@ export const projects: Project[] = [
     description: "Multi-branch radiology platform: appointments, scans, reports and patient records.",
     tags: ["Dashboard", "Multi-branch", "Reports"],
     image: "/projects/sys-radiology.webp",
+    country: "Egypt",
   },
   {
     slug: "crm-erp",
@@ -399,6 +439,7 @@ export const projects: Project[] = [
     description: "CRM and ERP for a company: leads, clients, sales pipeline, invoices and inventory.",
     tags: ["CRM", "ERP", "Dashboard"],
     image: "/projects/sys-crm-erp.webp",
+    country: "Egypt",
   },
   {
     slug: "realestate-system",
@@ -409,6 +450,7 @@ export const projects: Project[] = [
     description: "Sales system for a developer: projects, units, reservations, installments and brokers.",
     tags: ["Dashboard", "Sales", "Reports"],
     image: "/projects/sys-realestate.webp",
+    country: "Egypt",
   },
   {
     slug: "64west-order-api",
@@ -418,6 +460,7 @@ export const projects: Project[] = [
     year: d,
     description: "NestJS order service: deposits, JWT auth, S3 uploads, scheduled jobs, SMS and email notifications.",
     tags: ["NestJS", "TypeScript", "Prisma", "PostgreSQL", "Twilio", "Resend"],
+    country: "USA",
   },
   {
     slug: "devware-motion",
@@ -427,6 +470,7 @@ export const projects: Project[] = [
     year: d,
     description: "Programmatic promo videos rendered with Remotion, React and Three.js.",
     tags: ["Remotion", "React", "TypeScript", "Three.js"],
+    country: "Egypt",
   },
   {
     slug: "al-reem-halal",
@@ -437,6 +481,7 @@ export const projects: Project[] = [
     description: "Shawarma and taco restaurant website with menu.",
     tags: ["Responsive", "Menu"],
     image: "/projects/alreem.webp",
+    country: "USA",
   },
   {
     slug: "el-adl-export",
@@ -447,6 +492,7 @@ export const projects: Project[] = [
     description: "Website for an agricultural export company.",
     tags: ["Responsive", "Arabic / English"],
     image: "/projects/eladl.webp",
+    country: "USA",
   },
 ];
 
@@ -520,6 +566,15 @@ export const stack: { group: string; items: { name: string; icon?: string }[] }[
     ],
   },
 ];
+
+/** Add achievements here: { title, detail, year }. The tab stays hidden while empty. */
+export const achievements: { title: string; detail: string; year: string }[] = [];
+
+/** "Now listening" card: put a song you like here. Empty = placeholder text. */
+export const nowListening = { title: "", artist: "", cover: "" };
+
+/** Years of experience, from the earliest year in the experience list. */
+export const yearsOfExperience = Math.max(1, Number(d) - Math.min(...experience.map((e) => Number(e.period.slice(0, 4)))));
 
 /** Add certificates here: { title, issuer, year, url? }. The tab stays hidden while empty. */
 export const certificates: { title: string; issuer: string; year: string; url?: string }[] = [];

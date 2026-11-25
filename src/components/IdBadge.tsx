@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { prefersReduced } from "@/lib/gsap";
+import { gsap, prefersReduced } from "@/lib/gsap";
 import { profile } from "@/data/portfolio";
 
 type Props = {
@@ -152,9 +152,7 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
             <span>{profile.year}</span>
           </div>
           <div className="mx-auto mt-[0.75em] h-[0.375em] w-[3.5em] rounded-full bg-black/50" />
-          <div className="relative mx-auto mt-[0.75em] aspect-square w-[62%] overflow-hidden rounded-[0.9em] border border-white/10 bg-gradient-to-b from-accent/30 to-transparent">
-            <Image src="/avatar/sohila.webp" alt="Sohila Ebrahim" fill sizes={`${Math.round(width * 0.62)}px`} className="pointer-events-none object-cover" draggable={false} />
-          </div>
+          <BadgePhoto width={width} />
           <div className="px-[1.25em] pb-[1.25em] pt-[1em] text-center">
             <p className="font-display text-[1.25em] font-extrabold uppercase leading-tight">
               {profile.firstName} {profile.lastName}
@@ -175,6 +173,69 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The photo on the badge with "expressions": the picture follows the cursor a little,
+ * blinks with a quick squash now and then, sometimes pops a wink, and bounces happily on hover/tap.
+ */
+function BadgePhoto({ width }: { width: number }) {
+  const frame = useRef<HTMLDivElement>(null);
+  const img = useRef<HTMLDivElement>(null);
+  const [pop, setPop] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (prefersReduced()) return;
+    const f = frame.current!;
+    const i = img.current!;
+    const px = gsap.quickTo(i, "x", { duration: 0.6, ease: "power3" });
+    const py = gsap.quickTo(i, "y", { duration: 0.6, ease: "power3" });
+    const move = (e: PointerEvent) => {
+      const r = f.getBoundingClientRect();
+      px(gsap.utils.clamp(-1, 1, (e.clientX - (r.left + r.width / 2)) / (window.innerWidth / 2)) * 7);
+      py(gsap.utils.clamp(-1, 1, (e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2)) * 5);
+    };
+    window.addEventListener("pointermove", move);
+    let t: ReturnType<typeof setTimeout>;
+    let hide: ReturnType<typeof setTimeout>;
+    const blink = () => {
+      gsap.fromTo(f, { scaleY: 1 }, { scaleY: 0.95, scaleX: 1.02, duration: 0.09, yoyo: true, repeat: 1, ease: "power1.inOut", transformOrigin: "50% 40%" });
+      if (Math.random() < 0.3) {
+        setPop(Math.random() < 0.5 ? "😉" : "✨");
+        hide = setTimeout(() => setPop(null), 1100);
+      }
+      t = setTimeout(blink, 2600 + Math.random() * 2800);
+    };
+    t = setTimeout(blink, 2000);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(hide);
+      window.removeEventListener("pointermove", move);
+    };
+  }, []);
+
+  const happy = () => {
+    if (prefersReduced()) return;
+    gsap.fromTo(frame.current, { scale: 1 }, { scale: 1.07, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" });
+    setPop("😊");
+    setTimeout(() => setPop(null), 900);
+  };
+
+  return (
+    <div className="relative mx-auto mt-[0.75em] w-[62%]" onPointerEnter={happy} onClick={happy}>
+      <div ref={frame} className="relative aspect-square overflow-hidden rounded-[0.9em] border border-white/10 bg-gradient-to-b from-accent/30 to-transparent">
+        <div ref={img} className="absolute -inset-[6%]">
+          <Image src="/avatar/sohila.webp" alt="Sohila Ebrahim" fill sizes={`${Math.round(width * 0.7)}px`} className="pointer-events-none object-cover" draggable={false} />
+        </div>
+      </div>
+      <span
+        aria-hidden
+        className={`absolute -right-[0.6em] -top-[0.6em] text-[1.6em] transition-all duration-300 ${pop ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}
+      >
+        {pop ?? "😉"}
+      </span>
     </div>
   );
 }

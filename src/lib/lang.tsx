@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { dict, type Dict, type Lang } from "@/data/i18n";
+import { fullDict as dict, type Dict, type Lang } from "@/data/i18n";
 import { ScrollTrigger } from "@/lib/gsap";
 
 const Ctx = createContext<{ lang: Lang; t: Dict; setLang: (l: Lang) => void }>({ lang: "en", t: dict.en, setLang: () => {} });

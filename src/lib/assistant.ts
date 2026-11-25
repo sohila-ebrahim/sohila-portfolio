@@ -1,4 +1,4 @@
-import { experience, profile, projects, services, stack } from "@/data/portfolio";
+import { education, experience, expertise, languages, profile, projects, services, stack } from "@/data/portfolio";
 
 /** Everything the assistant is allowed to know, built from the site's own data. */
 export function knowledge(): string {
@@ -8,6 +8,9 @@ export function knowledge(): string {
   return [
     `Name: Sohila Ebrahim. Role: ${profile.role}. Location: ${profile.location}. ${profile.availability}.`,
     `Intro: ${profile.intro}`,
+    `Summary: ${profile.summary}`,
+    `Education: ${education.map((e) => `${e.period} ${e.degree ? e.degree + ", " : ""}${e.school}`).join("; ")}.`,
+    `Languages: ${languages.map((l) => l.name + (l.level ? ` (${l.level})` : "")).join(", ")}. Expertise: ${expertise.join(", ")}.`,
     `Bio: ${profile.bio.join(" ")}`,
     `Contact: email ${profile.email}, phone/WhatsApp ${profile.phone} (${profile.whatsapp}), GitHub https://github.com/sohilaebrahim00.`,
     `Services:\n${services.map((s) => `- ${s.title}: ${s.description} (${s.points.join(", ")})`).join("\n")}`,

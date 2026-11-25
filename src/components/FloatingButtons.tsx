@@ -14,7 +14,7 @@ export default function FloatingButtons() {
     return () => window.removeEventListener("scroll", on);
   }, []);
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-center gap-3 md:bottom-8 md:right-8">
+    <div data-floating className="fixed bottom-5 right-5 z-40 flex flex-col items-center gap-3 md:bottom-8 md:right-8">
       <button
         aria-label="Back to top"
         onClick={() => scrollToTarget(0)}
