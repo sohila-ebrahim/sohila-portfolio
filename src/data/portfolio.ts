@@ -108,7 +108,6 @@ export const projects: Project[] = [
     tags: ["React", "Vite", "GSAP", "Lenis", "Three.js", "Firebase"],
     image: "/projects/oha-roadside.jpg",
     liveUrl: "https://www.oha-roadside.com",
-    githubUrl: "https://github.com/sohilaebrahim00/oha-roadside",
     featured: true,
   },
   {
@@ -153,7 +152,6 @@ export const projects: Project[] = [
     year: "2026",
     description: "Driver app for accepting and managing chauffeur trips.",
     tags: ["Expo", "Supabase"],
-    githubUrl: "https://github.com/sohilaebrahim00/lct-universal-driver-app",
   },
   {
     slug: "lct-dispatch-dashboard",
@@ -162,7 +160,6 @@ export const projects: Project[] = [
     year: "2026",
     description: "Admin dispatch dashboard with live maps, bookings and analytics charts.",
     tags: ["React", "Vite", "Leaflet", "Recharts"],
-    githubUrl: "https://github.com/sohilaebrahim00/lct-universal-admin-dashboard",
   },
   {
     slug: "lct-backend",
@@ -182,7 +179,6 @@ export const projects: Project[] = [
     tags: ["Node.js", "esbuild", "Three.js", "SEO"],
     image: "/projects/texas-battery-replacement.png",
     liveUrl: "https://texasbatteryreplacement.com",
-    githubUrl: "https://github.com/sohilaebrahim00/texas-battery-replacement",
   },
   {
     slug: "alola-developments",
@@ -193,7 +189,6 @@ export const projects: Project[] = [
     tags: ["Next.js", "GSAP", "Lenis"],
     image: "/projects/alola-developments.webp",
     liveUrl: "https://aloladevelopments.com",
-    githubUrl: "https://github.com/sohilaebrahim00/alola-website",
   },
   {
     slug: "salam-restaurant",
@@ -204,7 +199,6 @@ export const projects: Project[] = [
     tags: ["React", "Vite", "shadcn/ui", "Netlify Functions"],
     image: "/projects/salam-restaurant.jpg",
     liveUrl: "https://salamtx.com",
-    githubUrl: "https://github.com/sohilaebrahim00/salamtx",
   },
   {
     slug: "dr-monzer-allan",
@@ -224,7 +218,7 @@ export const projects: Project[] = [
     year: "2026",
     description: "Building materials store for web and mobile.",
     tags: ["React", "Vite", "Capacitor"],
-    image: "/projects/64west-store.png",
+    image: "/projects/64west-store.jpg",
     liveUrl: "https://64westbm.com",
   },
   {
@@ -264,7 +258,6 @@ export const projects: Project[] = [
     tags: ["HTML", "JavaScript", "EN/AR"],
     image: "/projects/devware-website.webp",
     liveUrl: "https://devware-website.netlify.app",
-    githubUrl: "https://github.com/sohilaebrahim00/devware-website",
   },
   {
     slug: "foundex-fencing",
