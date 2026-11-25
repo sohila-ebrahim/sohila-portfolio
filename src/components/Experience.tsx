@@ -1,10 +1,12 @@
 "use client";
 import { useRef } from "react";
+import { useLang } from "@/lib/lang";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { experience } from "@/data/portfolio";
 
 export default function Experience() {
   const ref = useRef<HTMLElement>(null);
+  const { t } = useLang();
 
   useGSAP(
     () => {
@@ -26,7 +28,7 @@ export default function Experience() {
   return (
     <section id="experience" ref={ref} className="px-site mx-auto w-full py-24 md:py-32">
       <h2 className="flex items-center gap-3 text-lg font-semibold uppercase tracking-wide md:text-xl">
-        <span className="text-accent">✸</span> Career &amp; <span className="text-accent">Experience</span>
+        <span className="text-accent">✸</span> {t.career} <span className="text-accent">{t.careerAccent}</span>
       </h2>
       <div className="mt-16 space-y-6">
         {experience.map((e) => (

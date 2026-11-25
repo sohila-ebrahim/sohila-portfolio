@@ -4,10 +4,12 @@ import { gsap, prefersReduced, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { profile } from "@/data/portfolio";
 import SplitText from "./SplitText";
 import TechIcon from "./TechIcon";
+import { useLang } from "@/lib/lang";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
   const [sent, setSent] = useState(false);
+  const { t } = useLang();
 
   useGSAP(
     () => {
@@ -30,38 +32,38 @@ export default function Contact() {
   };
 
   const items = [
-    { label: "Email me", value: profile.email, href: `mailto:${profile.email}`, icon: "siGmail" },
-    { label: "WhatsApp", value: profile.phone, href: profile.whatsapp, icon: "siWhatsapp" },
-    { label: "Phone", value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, icon: "" },
-    { label: "Location", value: profile.location, href: "", icon: "" },
+    { label: t.emailMe, value: profile.email, href: `mailto:${profile.email}`, icon: "siGmail" },
+    { label: t.nav.whatsapp, value: profile.phone, href: profile.whatsapp, icon: "siWhatsapp" },
+    { label: t.phone, value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, icon: "", kind: "phone" },
+    { label: t.location, value: profile.location, href: "", icon: "", kind: "loc" },
   ];
 
   return (
     <section id="contact" ref={ref} className="px-site w-full bg-[#0b0a13] py-20 md:py-28">
       <p className="ct-fade flex items-center gap-3 font-display text-2xl font-bold uppercase md:text-[42px]">
-        <span className="text-accent">✸</span> Get in <span className="text-accent">touch</span>
+        <span className="text-accent">✸</span> {t.getInTouch} <span className="text-accent">{t.getInTouchAccent}</span>
       </p>
 
       <div className="mt-16 grid gap-16 lg:grid-cols-[1.15fr_1fr] lg:gap-24">
         <div>
           <h2 className="ct-title font-display text-[13vw] font-bold uppercase leading-[1.05] tracking-tight md:text-[7.5vw] lg:text-[100px]">
-            <SplitText text="Let's talk" />
+            <SplitText text={t.contactTitle[0]} />
             <br />
-            <SplitText text="about your" className="text-accent" />
+            <SplitText text={t.contactTitle[1]} className="text-accent" />
             <br />
-            <SplitText text="idea." className="text-accent" />
+            <SplitText text={t.contactTitle[2]} className="text-accent" />
           </h2>
-          <p className="ct-fade mt-8 max-w-md text-muted">Have a project in mind or looking for a long-term partner? Send me a message about what you&apos;re building.</p>
+          <p className="ct-fade mt-8 max-w-md text-muted">{t.contactIntro}</p>
           <ul className="mt-10 space-y-6">
             {items.map((it) => {
               const inner = (
                 <>
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface">
-                    {it.icon ? <TechIcon name={it.label} icon={it.icon} size={18} /> : <span className="text-accent">{it.label === "Phone" ? "☎" : "⌖"}</span>}
+                    {it.icon ? <TechIcon name={it.label} icon={it.icon} size={18} /> : <span className="text-accent">{"kind" in it && it.kind === "phone" ? "☎" : "⌖"}</span>}
                   </span>
                   <span>
                     <span className="block text-[11px] font-bold uppercase tracking-[0.2em] text-accent-soft">{it.label}</span>
-                    <span className="block font-semibold">{it.value}</span>
+                    <span className="block font-semibold" dir="ltr">{it.value}</span>
                   </span>
                 </>
               );
@@ -84,23 +86,23 @@ export default function Contact() {
             rel="noreferrer"
             className="ct-fade mt-10 inline-flex items-center gap-3 rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-[#062b14] transition hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(37,211,102,.35)]"
           >
-            <TechIcon name="WhatsApp" icon="siWhatsapp" size={20} mono /> Chat on WhatsApp
+            <TechIcon name="WhatsApp" icon="siWhatsapp" size={20} mono /> {t.chatWhatsapp}
           </a>
         </div>
 
         <form onSubmit={submit} className="ct-fade h-fit rounded-3xl border border-accent/30 bg-surface/80 p-6 shadow-[0_0_60px_rgba(139,92,246,.12)] md:p-10">
-          <h3 className="font-display text-2xl font-bold">Send a project inquiry</h3>
-          <p className="mt-2 text-sm text-muted">Leave your details and a few words about the project. It opens your email app with everything filled in.</p>
-          <label className="mt-8 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-name">Your name</label>
+          <h3 className="font-display text-2xl font-bold">{t.formTitle}</h3>
+          <p className="mt-2 text-sm text-muted">{t.formIntro}</p>
+          <label className="mt-8 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-name">{t.formName}</label>
           <input id="ct-name" name="name" required autoComplete="name" placeholder="Jane Doe" className="mt-3 w-full rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
-          <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-from">Email or phone number</label>
+          <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-from">{t.formFrom}</label>
           <input id="ct-from" name="from" required placeholder="name@example.com or +20 1xx xxx xxxx" className="mt-3 w-full rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
-          <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-msg">How can I help?</label>
+          <label className="mt-6 block text-[11px] font-bold uppercase tracking-[0.2em] text-muted" htmlFor="ct-msg">{t.formMsg}</label>
           <textarea id="ct-msg" name="message" required rows={5} placeholder="Tell me about your project…" className="mt-3 w-full resize-none rounded-xl border border-line bg-bg/70 px-4 py-3 outline-none transition placeholder:text-muted/60 focus:border-accent" />
           <button type="submit" className="btn-glow mt-8 w-full rounded-full py-4 text-xs font-extrabold uppercase tracking-[0.25em]">
-            Send message
+            {t.formSend}
           </button>
-          {sent && <p className="mt-4 text-center text-sm text-accent-soft" role="status">Your email app should open now. If it doesn&apos;t, write to {profile.email}.</p>}
+          {sent && <p className="mt-4 text-center text-sm text-accent-soft" role="status">{t.formSent(profile.email)}</p>}
         </form>
       </div>
     </section>
@@ -127,6 +129,7 @@ export function Footer() {
     { scope: ref }
   );
   const name = `${profile.firstName} ${profile.lastName} · `;
+  const { t } = useLang();
   return (
     <footer ref={ref} className="relative flex w-full flex-col overflow-hidden border-t border-white/5 bg-surface pb-12 pt-32">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-10 select-none overflow-hidden">
@@ -138,15 +141,15 @@ export function Footer() {
       <div className="px-site relative grid gap-12 md:grid-cols-[1.4fr_1fr] md:items-end">
         <div>
           <h2 className="ft-title font-display text-[14vw] font-bold uppercase leading-[0.95] md:text-[8vw]">
-            <SplitText text="Let's build" />
+            <SplitText text={t.footerTitle[0]} />
             <br />
-            <SplitText text="together." className="text-accent" />
+            <SplitText text={t.footerTitle[1]} className="text-accent" />
           </h2>
           <a href={`mailto:${profile.email}`} className="btn-glow mt-10 inline-block rounded-full px-10 py-4 text-xs font-extrabold uppercase tracking-[0.25em]">
-            Start a project
+            {t.startProject}
           </a>
         </div>
-        <div className="space-y-8 md:text-right">
+        <div className="space-y-8 md:text-end">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-soft">Socials</p>
             <div className="mt-3 flex gap-3 md:justify-end">
@@ -158,13 +161,13 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-soft">Contact</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-soft">{t.nav.contact}</p>
             <a href={`mailto:${profile.email}`} className="mt-2 block font-semibold link-underline">{profile.email}</a>
             <a href={profile.whatsapp} target="_blank" rel="noreferrer" className="mt-1 block text-muted hover:text-fg">{profile.phone}</a>
           </div>
         </div>
       </div>
-      <p className="px-site relative mt-20 text-sm text-muted">© {profile.year} Sohila Ebrahim. All rights reserved.</p>
+      <p className="px-site relative mt-20 text-sm text-muted">© {profile.year} Sohila Ebrahim. {t.rights}</p>
     </footer>
   );
 }

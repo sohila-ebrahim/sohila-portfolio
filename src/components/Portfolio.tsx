@@ -1,7 +1,9 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { useLang } from "@/lib/lang";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { scrollToTarget } from "@/lib/scroll";
 import { certificates, projectKinds, projects } from "@/data/portfolio";
 import ProjectImage from "./ProjectImage";
 import ProjectLinks from "./ProjectLinks";
@@ -14,6 +16,8 @@ export default function Portfolio() {
   const ref = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState("All");
+  const { t, lang } = useLang();
+  const pin = useRef<ScrollTrigger | null>(null);
   const [index, setIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -45,8 +49,43 @@ export default function Portfolio() {
     const el = track.current;
     if (!el) return;
     const clamped = Math.max(0, Math.min(list.length - 1, i));
-    el.scrollTo({ left: clamped * cardStep(), behavior: "smooth" });
+    const left = clamped * cardStep();
+    const st = pin.current;
+    if (st) {
+      // pinned (desktop): move the page, the scroll drives the slider
+      const max = el.scrollWidth - el.clientWidth || 1;
+      scrollToTarget(st.start + Math.min(1, left / max) * (st.end - st.start));
+    } else el.scrollTo({ left, behavior: "smooth" });
   };
+
+  // desktop: pin the section and turn vertical scroll into horizontal movement
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const el = track.current!;
+        el.style.scrollSnapType = "none";
+        el.style.scrollBehavior = "auto";
+        const distance = () => el.scrollWidth - el.clientWidth;
+        pin.current = ScrollTrigger.create({
+          trigger: ref.current,
+          start: "top top",
+          end: () => "+=" + distance(),
+          pin: true,
+          scrub: true,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => { el.scrollLeft = self.progress * distance(); },
+        });
+        return () => {
+          pin.current = null;
+          el.style.scrollSnapType = "";
+          el.style.scrollBehavior = "";
+        };
+      });
+      return () => mm.revert();
+    },
+    { scope: ref, dependencies: [filter], revertOnUpdate: true }
+  );
 
   // re-fill on filter change: back to the first card and animate the cards in
   useEffect(() => {
@@ -99,13 +138,13 @@ export default function Portfolio() {
   };
 
   return (
-    <section id="portfolio" ref={ref} className="w-full overflow-hidden bg-surface py-20 md:py-28">
+    <section id="portfolio" ref={ref} className="flex min-h-[100svh] w-full flex-col justify-center overflow-hidden bg-surface py-20 md:py-24">
       <div className="pf-head px-site flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div>
           <h2 className="flex items-center gap-3 font-display text-3xl font-bold uppercase md:text-[42px]">
-            <span className="text-accent">✸</span> All <span className="text-accent">projects</span>
+            <span className="text-accent">✸</span> {t.allProjects} <span className="text-accent">{t.allProjectsAccent}</span>
           </h2>
-          <p className="mt-3 text-muted">Drag, swipe or use the arrows. {projects.length} projects, live links included.</p>
+          <p className="mt-3 text-muted">{t.allProjectsHint(projects.length)}</p>
         </div>
         <div className="flex gap-3">
           <button aria-label="Previous project" onClick={() => go(index - 1)} disabled={index <= 0} className="flex h-14 w-14 items-center justify-center rounded-full border border-line text-xl transition hover:border-accent hover:bg-accent disabled:opacity-30 disabled:hover:bg-transparent">
@@ -127,7 +166,7 @@ export default function Portfolio() {
               aria-pressed={filter === k}
               className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${filter === k ? "border-accent bg-accent/20 text-fg" : "border-line text-muted hover:border-accent/60 hover:text-fg"}`}
             >
-              {k} <span className="text-xs opacity-60">{n}</span>
+              {k === "All" ? t.all : k} <span className="text-xs opacity-60">{n}</span>
             </button>
           );
         })}
@@ -141,11 +180,13 @@ export default function Portfolio() {
         role="region"
         aria-roledescription="carousel"
         aria-label="Projects"
+        dir="ltr"
         className="mt-10 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-[5%] pb-6 outline-none [scrollbar-width:none] active:cursor-grabbing sm:px-[3%] [&::-webkit-scrollbar]:hidden"
       >
         {list.map((p, i) => (
           <article
             key={p.slug}
+            dir={lang === "ar" ? "rtl" : "ltr"}
             className="pf-card group flex w-[82vw] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-bg/70 transition duration-500 hover:-translate-y-1 hover:border-accent/50 hover:shadow-[0_20px_60px_rgba(139,92,246,.18)] sm:w-[440px]"
           >
             <Link href={`/projects/${p.slug}`} draggable={false} className="relative block aspect-[16/10] overflow-hidden">

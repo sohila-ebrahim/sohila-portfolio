@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { useLang } from "@/lib/lang";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { services } from "@/data/portfolio";
 import SectionTitle from "./SectionTitle";
@@ -10,6 +11,7 @@ const shapes = ["✦", "◆", "●", "▲", "✸"];
 export default function Services() {
   const ref = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  const { t } = useLang();
 
   const { contextSafe } = useGSAP(
     () => {
@@ -31,12 +33,12 @@ export default function Services() {
 
   return (
     <section id="services" ref={ref} className="px-site relative bg-surface pb-24 pt-28 md:pb-32">
-      <SectionTitle text="What I" accent="Do /" />
+      <SectionTitle text={t.whatIDo} accent={t.whatIDoAccent} />
       <div className="mt-12 grid gap-6 md:grid-cols-[1fr_1fr]">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted md:text-center">( Services )</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted md:text-center">{t.servicesLabel}</p>
         <Reveal>
           <p className="max-w-md text-lg leading-relaxed text-fg/80 md:text-xl">
-            I build digital experiences with thoughtful design, solid engineering and real-world performance, from websites to full web and mobile products.
+            {t.servicesIntro}
           </p>
         </Reveal>
       </div>

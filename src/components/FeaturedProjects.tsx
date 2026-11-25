@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import Link from "next/link";
+import { useLang } from "@/lib/lang";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { scrollToTarget } from "@/lib/scroll";
 import { projects } from "@/data/portfolio";
@@ -12,6 +13,7 @@ import Reveal from "./Reveal";
 export default function FeaturedProjects() {
   const ref = useRef<HTMLElement>(null);
   const featured = projects.filter((p) => p.featured);
+  const { t } = useLang();
 
   useGSAP(
     () => {
@@ -37,10 +39,10 @@ export default function FeaturedProjects() {
 
   return (
     <section id="projects" ref={ref} className="px-site relative mb-10 bg-surface pb-24 pt-28">
-      <SectionTitle text="Selected" accent="Projects /" />
-      <Reveal className="mt-10 md:ml-[50%]">
+      <SectionTitle text={t.selected} accent={t.selectedAccent} />
+      <Reveal className="mt-10 md:ms-[50%]">
         <p className="max-w-md text-lg leading-relaxed text-fg/80 md:text-xl">
-          Featured client projects, live and in production, crafted with passion and purpose.
+          {t.selectedIntro}
         </p>
       </Reveal>
 
@@ -85,7 +87,7 @@ export default function FeaturedProjects() {
         data-mood="wink"
         className="group mt-24 flex w-full items-center justify-center gap-3 rounded-3xl border border-line bg-bg/60 py-12 font-display text-2xl font-semibold transition hover:border-accent md:text-4xl"
       >
-        View all {projects.length} projects
+        {t.viewAll(projects.length)}
         <span className="transition-transform duration-500 group-hover:-translate-y-1 group-hover:translate-x-1">↗</span>
       </button>
     </section>

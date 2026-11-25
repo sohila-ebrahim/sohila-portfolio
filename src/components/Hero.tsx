@@ -1,18 +1,31 @@
 "use client";
-import { useRef } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { gsap, prefersReduced, useGSAP } from "@/lib/gsap";
 import { LOADED_EVENT, scrollToTarget } from "@/lib/scroll";
-import { profile } from "@/data/portfolio";
+import { useLang } from "@/lib/lang";
 import HeroCards from "./HeroCards";
+import IdBadge from "./IdBadge";
 
 /**
- * Reference-style hero: one big rounded violet card, the name split in two
- * (سهيلة on the right, إبراهيم on the left), the portrait rising from the bottom
- * with an animated outline, a white pill CTA, and four cards underneath.
+ * Reference-style hero: one big rounded violet card, the name split on both sides
+ * of Sohila's background-removed portrait (bottom-anchored, glowing outline),
+ * a white pill CTA, and four cards underneath.
  */
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const { t, lang } = useLang();
+  // badge size follows the viewport so card + strap is ~60% of the screen height
+  const [badge, setBadge] = useState({ w: 300, rope: 140 });
+  useEffect(() => {
+    const fit = () => {
+      const mobile = window.innerWidth < 768;
+      const w = Math.round(Math.min(mobile ? 210 : 360, window.innerHeight * (mobile ? 0.26 : 0.4)));
+      setBadge({ w, rope: Math.round(window.innerHeight * (mobile ? 0.2 : 0.1)) });
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
 
   useGSAP(
     () => {
@@ -20,9 +33,9 @@ export default function Hero() {
       const intro = gsap.timeline({ paused: true });
       intro
         .from(".h-card", { scale: 0.94, opacity: 0, duration: 1.4, ease: "expo.out" })
-        .from(".h-first", { xPercent: 30, opacity: 0, duration: 1.3, ease: "power4.out" }, 0.15)
-        .from(".h-last", { xPercent: -30, opacity: 0, duration: 1.3, ease: "power4.out" }, 0.2)
-        .from(".h-portrait", { yPercent: 40, opacity: 0, duration: 1.4, ease: "expo.out" }, 0.3)
+        .from(".h-first", { xPercent: -25, opacity: 0, duration: 1.3, ease: "power4.out" }, 0.15)
+        .from(".h-last", { xPercent: 25, opacity: 0, duration: 1.3, ease: "power4.out" }, 0.2)
+        .from(".h-portrait", { yPercent: -60, opacity: 0, duration: 1.6, ease: "elastic.out(1, 0.6)" }, 0.3)
         .from(".h-fade", { y: 24, opacity: 0, duration: 0.9, stagger: 0.08, ease: "power3.out" }, 0.7)
         .from(".hc-card", { y: 60, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" }, 0.8);
       if (reduce) intro.progress(1);
@@ -32,12 +45,9 @@ export default function Hero() {
       else window.addEventListener(LOADED_EVENT, play, { once: true });
 
       if (!reduce) {
-        gsap.to(".h-float", { y: -10, duration: 3, ease: "sine.inOut", yoyo: true, repeat: -1 });
-        // mouse parallax: names drift opposite to the portrait
         const card = ref.current!.querySelector<HTMLElement>(".h-card")!;
         const fx = gsap.quickTo(".h-first", "x", { duration: 1, ease: "power3" });
         const lx = gsap.quickTo(".h-last", "x", { duration: 1, ease: "power3" });
-        const px = gsap.quickTo(".h-portrait", "x", { duration: 1, ease: "power3" });
         const gx = gsap.quickTo(".h-glow", "x", { duration: 1.4, ease: "power3" });
         const gy = gsap.quickTo(".h-glow", "y", { duration: 1.4, ease: "power3" });
         const move = (e: PointerEvent) => {
@@ -46,12 +56,10 @@ export default function Hero() {
           const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
           fx(-dx * 30);
           lx(-dx * 30);
-          px(dx * 14);
           gx(dx * 80);
           gy(dy * 60);
         };
         card.addEventListener("pointermove", move);
-        gsap.to(".h-inner", { yPercent: 8, ease: "none", scrollTrigger: { trigger: card, start: "top top", end: "bottom top", scrub: true } });
         return () => {
           card.removeEventListener("pointermove", move);
           window.removeEventListener(LOADED_EVENT, play);
@@ -62,75 +70,44 @@ export default function Hero() {
     { scope: ref }
   );
 
+  const nameFont = lang === "ar" ? "font-ar font-black" : "font-heavy font-normal tracking-tight";
+
   return (
-    <section id="top" ref={ref} className="relative px-3 pb-10 pt-[84px] md:px-4 md:pt-[96px]">
-      <div className="h-card relative h-[calc(100svh-104px)] min-h-[600px] overflow-hidden rounded-[32px] border border-white/[0.06] bg-[#120b24] md:min-h-[640px]">
+    <section id="top" ref={ref} className="relative px-3 pb-10 pt-[76px] md:px-4 md:pt-[96px]">
+      <div className="h-card relative h-[78svh] min-h-[560px] overflow-hidden rounded-[32px] border border-white/[0.06] bg-[#120b24] md:h-[calc(100svh-120px)] md:max-h-[860px] md:min-h-[600px]">
         {/* violet spotlight */}
-        <div aria-hidden className="h-glow pointer-events-none absolute left-1/2 top-[55%] h-[120%] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.55),rgba(91,33,182,0.25)_55%,transparent_80%)]" />
+        <div aria-hidden className="h-glow pointer-events-none absolute left-1/2 top-[60%] h-[120%] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.55),rgba(91,33,182,0.25)_55%,transparent_80%)]" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(236,72,153,0.18),transparent_55%)]" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(9,8,15,0.75))]" />
 
-        <div className="h-inner absolute inset-0" dir="rtl">
-          {/* first name, right side */}
-          <p
-            lang="ar"
-            className="h-first pointer-events-none absolute right-1/2 top-[8%] z-10 translate-x-1/2 select-none whitespace-nowrap font-ar text-[24vw] font-black leading-none tracking-tight text-[#ece4ff] md:right-[5%] md:top-[16%] md:translate-x-0 md:text-[11vw]"
-          >
-            سهيلة
-          </p>
-          {/* last name, left side, a bit lower */}
-          <p
-            lang="ar"
-            className="h-last pointer-events-none absolute left-1/2 top-[24%] z-10 -translate-x-1/2 select-none whitespace-nowrap font-ar text-[20vw] font-black leading-none tracking-tight text-[#ece4ff] md:left-[3%] md:top-[46%] md:translate-x-0 md:text-[8.5vw]"
-          >
-            إبراهيم
-          </p>
+        <p className="h-fade absolute left-1/2 top-[5%] z-30 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.3em] text-white/70 md:text-xs">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> {t.role}
+        </p>
 
-          <p className="h-fade absolute left-1/2 top-[5%] hidden -translate-x-1/2 items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70 md:flex" dir="ltr">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> {profile.role}
-          </p>
+        {/* name: first on one side, last on the other, a bit lower */}
+        <p className={`h-first pointer-events-none absolute inset-x-0 top-[7%] z-10 text-center md:inset-x-auto md:start-[4%] md:text-start select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[16%] md:text-[10vw] xl:text-[160px]`}>
+          {t.firstName}
+        </p>
+        <p className={`h-last pointer-events-none absolute inset-x-0 bottom-[16%] z-10 text-center md:inset-x-auto md:bottom-auto md:end-[4%] md:text-end select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[50%] md:text-[10vw] xl:text-[160px]`}>
+          {t.lastName}
+        </p>
 
-          {/* portrait rising from the bottom edge, with a drawing outline */}
-          <div className="h-portrait absolute bottom-0 left-1/2 z-20 w-[74vw] max-w-[400px] -translate-x-1/2 md:w-[26vw]">
-            <div className="h-float relative">
-              <svg aria-hidden viewBox="0 0 400 560" className="pointer-events-none absolute -inset-x-[7%] -top-[6%] h-[112%] w-[114%] overflow-visible">
-                <defs>
-                  <linearGradient id="hero-stroke" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#c4b5fd" />
-                    <stop offset="0.5" stopColor="#8b5cf6" />
-                    <stop offset="1" stopColor="#f472b6" />
-                  </linearGradient>
-                </defs>
-                <path className="hero-outline" d="M20 560 V200 A180 180 0 0 1 380 200 V560" fill="none" stroke="url(#hero-stroke)" strokeWidth="3" strokeLinecap="round" strokeDasharray="140 40" opacity="0.9" />
-                <path className="hero-outline-2" d="M4 560 V198 A196 196 0 0 1 396 198 V560" fill="none" stroke="url(#hero-stroke)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="6 14" opacity="0.6" />
-              </svg>
-              <div className="relative aspect-[5/6] overflow-hidden rounded-t-[999px] shadow-[0_-20px_80px_rgba(139,92,246,0.45)]">
-                <Image
-                  src="/avatar/sohila.webp"
-                  alt="Sohila Ebrahim"
-                  fill
-                  loading="eager"
-                  fetchPriority="high"
-                  sizes="(min-width: 768px) 30vw, 74vw"
-                  className="object-cover object-[50%_35%]"
-                />
-                <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[#120b24]/70 to-transparent" />
-              </div>
-            </div>
-          </div>
+        {/* hanging ID badge with her photo, swinging between the two names */}
+        <div className="h-portrait absolute inset-x-0 top-0 z-20 mx-auto h-full w-full max-w-[560px]">
+          <IdBadge width={badge.w} rope={badge.rope} height="100%" swing glow />
+        </div>
 
-          {/* CTA pill */}
-          <div className="h-fade absolute bottom-[5%] left-0 right-0 z-30 flex justify-center">
+        {/* CTA pill */}
+        <div className="h-fade absolute bottom-[5%] left-0 right-0 z-30 flex justify-center">
           <button
             onClick={() => scrollToTarget("#contact")}
-            className="group flex items-center gap-3 rounded-full bg-white py-2 pl-2 pr-6 font-ar text-base font-bold text-[#140f22] shadow-[0_15px_40px_rgba(0,0,0,.35)] transition-transform hover:scale-105"
+            className="group flex items-center gap-3 rounded-full bg-white py-2 pe-2 ps-6 text-base font-bold text-[#140f22] shadow-[0_15px_40px_rgba(0,0,0,.35)] transition-transform hover:scale-105"
           >
-            ابدأ مشروعك
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#140f22] text-white transition-transform duration-500 group-hover:-rotate-45">
-              ←
+            {t.startProject}
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#140f22] text-white transition-transform duration-500 group-hover:-rotate-45 rtl:-scale-x-100">
+              →
             </span>
           </button>
-          </div>
         </div>
       </div>
 

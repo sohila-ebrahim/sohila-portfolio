@@ -14,6 +14,7 @@
   --font-display: var(--font-bricolage), system-ui, sans-serif;
   --font-sign: var(--font-sign), cursive;
   --font-ar: var(--font-alexandria), var(--font-bricolage), sans-serif;
+  --font-heavy: var(--font-anton), var(--font-bricolage), sans-serif;
 }
 
 html.lenis, html.lenis body { height: auto; }
@@ -107,3 +108,30 @@ body {
 .hero-outline { animation: dash-run 14s linear infinite; }
 .hero-outline-2 { animation: dash-run 22s linear infinite reverse; }
 @media (prefers-reduced-motion: reduce) { .hero-outline, .hero-outline-2 { animation: none; } }
+
+/* Arabic: Alexandria everywhere */
+html[lang="ar"] body, html[lang="ar"] .font-display { font-family: var(--font-ar); }
+html[lang="ar"] .uppercase { text-transform: none; }
+
+/* hero cutout: glowing outline that follows her silhouette */
+@keyframes outline-hue { 0%, 100% { filter: drop-shadow(0 0 1.5px #e9d5ff) drop-shadow(0 0 2px #a78bfa) drop-shadow(0 0 18px rgba(139,92,246,.75)); } 50% { filter: drop-shadow(0 0 1.5px #fbcfe8) drop-shadow(0 0 2px #f472b6) drop-shadow(0 0 26px rgba(236,72,153,.6)); } }
+.cutout-glow { animation: outline-hue 5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cutout-glow { animation: none; filter: drop-shadow(0 0 2px #a78bfa) drop-shadow(0 0 18px rgba(139,92,246,.6)); } }
+
+/* hero ID badge: soft animated glowing outline */
+@keyframes badge-glow { 0%, 100% { box-shadow: 0 0 0 1.5px rgba(196,181,253,.7), 0 0 28px rgba(139,92,246,.65), 0 30px 60px rgba(0,0,0,.5); } 50% { box-shadow: 0 0 0 1.5px rgba(244,114,182,.7), 0 0 40px rgba(236,72,153,.5), 0 30px 60px rgba(0,0,0,.5); } }
+.badge-glow { animation: badge-glow 4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .badge-glow { animation: none; box-shadow: 0 0 0 1.5px rgba(196,181,253,.7), 0 0 28px rgba(139,92,246,.6); } }
+
+/* brand gradient text with a slow shift (hero name) */
+@keyframes brand-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.text-brand {
+  background-image: linear-gradient(100deg, #8b5cf6 0%, #c4b5fd 25%, #ede9fe 45%, #f9a8d4 65%, #a78bfa 85%, #8b5cf6 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: brand-shift 9s ease-in-out infinite;
+  filter: drop-shadow(0 10px 30px rgba(18, 11, 36, 0.55));
+}
+@media (prefers-reduced-motion: reduce) { .text-brand { animation: none; } }
