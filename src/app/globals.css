@@ -150,6 +150,4 @@ html[lang="ar"] .uppercase { text-transform: none; }
 @keyframes vinyl-spin { to { transform: rotate(360deg); } }
 .eq-bar { height: 40%; animation: eq 0.9s ease-in-out infinite alternate; }
 @keyframes eq { 0% { height: 20%; } 100% { height: 100%; } }
-.track-progress { width: 0; animation: track 40s linear infinite; }
-@keyframes track { to { width: 100%; } }
-@media (prefers-reduced-motion: reduce) { .vinyl, .eq-bar, .track-progress { animation: none; } .track-progress { width: 38%; } }
+@media (prefers-reduced-motion: reduce) { .vinyl, .eq-bar { animation: none; } }

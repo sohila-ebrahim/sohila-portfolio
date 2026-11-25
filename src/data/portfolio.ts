@@ -497,9 +497,11 @@ export const achievements: { title: string; detail: string; year: string }[] = [
 export const nowListening = {
   title: "El Donia Zay El Margeha",
   titleAr: "الدنيا زي المرجيحة",
-  artist: "", // not confirmed yet
-  // no audio is hosted: the play button opens the song on YouTube
-  url: "https://www.youtube.com/results?search_query=" + encodeURIComponent("الدنيا زي المرجيحة"),
+  artist: "Amr El Saeed",
+  artistAr: "عمرو السعيد",
+  // official clip on the "Sha3beyat Official" channel; plays inside the card through the YouTube player
+  youtubeId: "uKfnpz85BzU",
+  url: "https://www.youtube.com/watch?v=uKfnpz85BzU",
 };
 
 /** Years of experience, from the earliest year in the experience list. */

@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap, prefersReduced, useGSAP } from "@/lib/gsap";
 import { useLang } from "@/lib/lang";
@@ -170,15 +170,80 @@ export function ServiceLetters() {
 }
 
 /* ------------------------------------------------------------------ now listening */
+type YTPlayer = { playVideo(): void; pauseVideo(): void; getCurrentTime(): number; getDuration(): number; destroy(): void };
+type YTNamespace = { Player: new (el: HTMLElement, opts: object) => YTPlayer; PlayerState: { PLAYING: number; PAUSED: number; ENDED: number } };
+declare global {
+  interface Window { YT?: YTNamespace; onYouTubeIframeAPIReady?: () => void }
+}
+
+/** Loads the YouTube IFrame API once, only when someone presses play. */
+function loadYT(): Promise<YTNamespace> {
+  return new Promise((resolve) => {
+    if (window.YT?.Player) return resolve(window.YT);
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { prev?.(); resolve(window.YT!); };
+    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+      const s = document.createElement("script");
+      s.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(s);
+    }
+  });
+}
+
+const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
 export function NowListening() {
   const { t, lang } = useLang();
   const title = (lang === "ar" ? nowListening.titleAr : nowListening.title) || t.trackPlaceholder;
+  const artist = lang === "ar" ? nowListening.artistAr : nowListening.artist;
+  const host = useRef<HTMLDivElement>(null);
+  const player = useRef<YTPlayer | null>(null);
+  const [state, setState] = useState<"idle" | "loading" | "playing" | "paused">("idle");
+  const [time, setTime] = useState({ cur: 0, dur: 0 });
+
+  // follow the real playback position while playing
+  useEffect(() => {
+    if (state !== "playing") return;
+    const id = setInterval(() => {
+      const p = player.current;
+      if (p) setTime({ cur: p.getCurrentTime() || 0, dur: p.getDuration() || 0 });
+    }, 500);
+    return () => clearInterval(id);
+  }, [state]);
+
+  useEffect(() => () => player.current?.destroy(), []);
+
+  const toggle = async () => {
+    if (state === "playing") { player.current?.pauseVideo(); return; }
+    if (player.current) { player.current.playVideo(); return; }
+    setState("loading");
+    const YT = await loadYT();
+    player.current = new YT.Player(host.current!, {
+      host: "https://www.youtube-nocookie.com",
+      videoId: nowListening.youtubeId,
+      width: 200,
+      height: 113,
+      playerVars: { playsinline: 1, controls: 0, rel: 0, modestbranding: 1 },
+      events: {
+        onReady: (e: { target: YTPlayer }) => e.target.playVideo(),
+        onStateChange: (e: { data: number }) => {
+          if (e.data === YT.PlayerState.PLAYING) setState("playing");
+          else if (e.data === YT.PlayerState.PAUSED) setState("paused");
+          else if (e.data === YT.PlayerState.ENDED) { setState("paused"); setTime((v) => ({ ...v, cur: 0 })); }
+        },
+      },
+    });
+  };
+
+  const pct = time.dur ? (time.cur / time.dur) * 100 : 0;
+  const playing = state === "playing";
+
   return (
     <section className="px-site py-16">
       <div className="mx-auto grid max-w-4xl items-center gap-8 rounded-[32px] border border-white/10 bg-gradient-to-br from-[#1a1530] to-[#0f0c19] p-6 md:grid-cols-[auto_1fr] md:p-10">
         {/* generated violet "vinyl" artwork (no real cover art) */}
         <div className="relative mx-auto h-44 w-44">
-          <div className="vinyl absolute inset-0 rounded-full shadow-[0_20px_50px_rgba(139,92,246,.45)]" />
+          <div className={`vinyl absolute inset-0 rounded-full shadow-[0_20px_50px_rgba(139,92,246,.45)] ${playing ? "" : "[animation-play-state:paused]"}`} />
           <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-violet-400 via-fuchsia-500 to-pink-400 ring-4 ring-black/40">
             <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0f0c19]" />
           </div>
@@ -187,29 +252,34 @@ export function NowListening() {
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-accent-soft">
             <span className="flex h-4 items-end gap-[3px]" aria-hidden>
               {[0, 1, 2, 3, 4].map((i) => (
-                <span key={i} className="eq-bar w-[3px] rounded bg-accent-soft" style={{ animationDelay: `${i * 0.13}s` }} />
+                <span key={i} className={`eq-bar w-[3px] rounded bg-accent-soft ${playing ? "" : "[animation-play-state:paused]"}`} style={{ animationDelay: `${i * 0.13}s` }} />
               ))}
             </span>
             {t.nowListening}
           </p>
           <p className="mt-3 text-2xl font-bold md:text-3xl">{title}</p>
-          {nowListening.artist && <p className="text-muted">{nowListening.artist}</p>}
+          {artist && <p className="text-muted">{artist}</p>}
           <div className="mt-6 flex items-center gap-4">
-            <a
-              href={nowListening.url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Play ${title} on YouTube`}
+            <button
+              onClick={toggle}
+              aria-label={playing ? "Pause" : "Play"}
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#140f22] transition hover:scale-110"
             >
-              ▶
-            </a>
+              {state === "loading" ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#140f22] border-t-transparent" /> : playing ? "❚❚" : "▶"}
+            </button>
             <div className="flex-1">
               <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-                <div className="track-progress h-full rounded-full bg-gradient-to-r from-violet-400 to-pink-400" />
+                <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-pink-400 transition-[width] duration-500" style={{ width: `${pct}%` }} />
               </div>
-              <p className="mt-1.5 text-xs text-muted">YouTube ↗</p>
+              <div className="mt-1.5 flex justify-between text-xs text-muted" dir="ltr">
+                <span>{fmt(time.cur)}</span>
+                <span>{time.dur ? fmt(time.dur) : "--:--"}</span>
+              </div>
             </div>
+          </div>
+          {/* the YouTube player itself (small, appears once she presses play) */}
+          <div className={`mt-4 overflow-hidden rounded-xl transition-all duration-500 ${state === "idle" ? "h-0 opacity-0" : "h-[113px] w-[200px] opacity-100"}`}>
+            <div ref={host} />
           </div>
           <p className="mt-5 text-sm italic text-fg/60">{t.musicTagline}</p>
         </div>
