@@ -40,6 +40,7 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
     const t0 = performance.now();
 
     const draw = () => {
+      if (!card.current || !strap.current) return;
       const angle = Math.atan2(p.x - anchorX, p.y);
       card.current!.style.transform = `translate(${p.x - width / 2}px, ${p.y}px) rotate(${(-angle * 180) / Math.PI}deg)`;
       const midX = (anchorX + p.x) / 2;

@@ -114,7 +114,25 @@ export function ServiceLetters() {
   useGSAP(
     () => {
       // background goes white -> gray -> near-black while you scroll through
-      gsap.fromTo(ref.current, { backgroundColor: "#f4f2fa", color: "#140f22" }, { backgroundColor: "#09080f", color: "#ece9f5", ease: "none", scrollTrigger: { trigger: ref.current, start: "top 60%", end: "bottom 80%", scrub: true } });
+      // text flips from dark to light halfway, so it never fades into the gray in between
+      gsap.fromTo(ref.current, { backgroundColor: "#f4f2fa" }, {
+        backgroundColor: "#09080f",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 60%",
+          end: "bottom 80%",
+          scrub: true,
+          onUpdate: (self) => { ref.current!.style.color = self.progress < 0.45 ? "#140f22" : "#ece9f5"; },
+        },
+      });
+      gsap.utils.toArray<HTMLElement>(".sl-mini").forEach((m, i) => {
+        gsap.fromTo(
+          m,
+          { x: (i % 2 ? 1 : -1) * (60 + i * 25), y: -80 - (i % 3) * 40, rotate: (i % 2 ? 1 : -1) * 35, opacity: 0 },
+          { x: 0, y: 0, rotate: 0, opacity: 1, ease: "none", scrollTrigger: { trigger: ref.current, start: "top 85%", end: "top 30%", scrub: true } }
+        );
+      });
       gsap.utils.toArray<HTMLElement>(".sl-row").forEach((r) => {
         gsap.from(r, { x: -60, opacity: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: r, start: "top 85%" } });
       });
@@ -123,7 +141,17 @@ export function ServiceLetters() {
   );
   return (
     <section ref={ref} className="px-site py-24 md:py-32" style={{ backgroundColor: "#f4f2fa", color: "#140f22" }}>
-      <h2 className="font-display text-4xl font-bold md:text-6xl">{t.lettersTitle}</h2>
+      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <h2 className="font-display text-4xl font-bold md:text-6xl">{t.lettersTitle}</h2>
+        {/* the tiles' letters assemble into her name while you scroll */}
+        <div className="flex gap-2 md:gap-3" dir="ltr" aria-label="SOHILA">
+          {t.letters.map((s, i) => (
+            <span key={i} aria-hidden className={`sl-mini flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tileStyle[i % 4]} font-heavy text-2xl text-white shadow-[0_10px_24px_rgba(91,33,182,.35),inset_0_2px_0_rgba(255,255,255,.55)] md:h-16 md:w-16 md:text-4xl`}>
+              {s.l}
+            </span>
+          ))}
+        </div>
+      </div>
       <div className="mt-14 space-y-4">
         {t.letters.map((s, i) => (
           <div key={i} className="sl-row flex items-center gap-6 rounded-3xl border border-current/10 p-4 md:gap-10 md:p-6" style={{ borderColor: "color-mix(in srgb, currentColor 12%, transparent)" }}>
