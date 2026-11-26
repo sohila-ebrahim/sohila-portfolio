@@ -173,7 +173,7 @@ export function Footer() {
   const name = `${profile.firstName} ${profile.lastName} · `;
   const { t } = useLang();
   return (
-    <footer ref={ref} className="relative flex w-full flex-col overflow-hidden border-t border-white/5 bg-surface pb-12 pt-32">
+    <footer ref={ref} className="relative flex w-full flex-col overflow-hidden border-t border-white/5 bg-surface pb-28 pt-32 md:pb-12">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-10 select-none overflow-hidden">
         <div className="ft-marquee flex w-max whitespace-nowrap font-heavy text-[20vw] uppercase leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(167,139,250,0.22)]">
           <span>{name.repeat(3)}</span>

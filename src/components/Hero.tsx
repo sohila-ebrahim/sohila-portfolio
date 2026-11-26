@@ -26,8 +26,12 @@ export default function Hero() {
   useEffect(() => {
     const cv = document.createElement("canvas");
     const gl = cv.getContext("webgl2") || cv.getContext("webgl");
+    const nav = navigator as Navigator & { deviceMemory?: number };
+    const lowPower = (nav.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4;
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    // the heavy 3D/physics badge only on capable desktops; phones get the light CSS badge
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUse3d(Boolean(gl) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    setUse3d(Boolean(gl) && !touch && !lowPower && window.innerWidth >= 768 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
   useEffect(() => {
     const fit = () => {
@@ -101,7 +105,7 @@ export default function Hero() {
         <p className={`h-first pointer-events-none absolute inset-x-0 top-[7%] z-10 text-center md:inset-x-auto md:start-[4%] md:text-start select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[16%] md:text-[10vw] xl:text-[160px]`}>
           {t.firstName}
         </p>
-        <p className={`h-last pointer-events-none absolute inset-x-0 bottom-[22%] z-10 text-center md:inset-x-auto md:bottom-auto md:end-[4%] md:text-end select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[50%] md:text-[10vw] xl:text-[160px]`}>
+        <p className={`h-last pointer-events-none absolute inset-x-0 bottom-[17%] z-10 text-center md:inset-x-auto md:bottom-auto md:end-[4%] md:text-end select-none whitespace-nowrap ${nameFont} text-[19vw] leading-[1.05] text-brand md:top-[50%] md:text-[10vw] xl:text-[160px]`}>
           {t.lastName}
         </p>
 
@@ -121,20 +125,20 @@ export default function Hero() {
         <Signature className="pointer-events-none absolute start-[5%] top-[40%] z-20 hidden w-[22vw] max-w-[340px] md:block" />
 
         {/* CTA pill */}
-        <div className="h-fade absolute bottom-[5%] left-0 right-0 z-30 flex flex-wrap items-center justify-center gap-3">
+        <div className="h-fade absolute bottom-[4%] left-0 right-0 z-30 flex flex-nowrap items-center justify-center gap-2 px-3 md:bottom-[5%] md:gap-3">
           <button
             onClick={() => scrollToTarget("#contact")}
-            className="group flex items-center gap-3 rounded-full bg-white py-2 pe-2 ps-6 text-base font-bold text-[#140f22] shadow-[0_15px_40px_rgba(0,0,0,.35)] transition-transform hover:scale-105"
+            className="group flex shrink-0 items-center gap-2 rounded-full bg-white py-1.5 pe-1.5 ps-4 text-sm font-bold md:gap-3 md:py-2 md:pe-2 md:ps-6 md:text-base text-[#140f22] shadow-[0_15px_40px_rgba(0,0,0,.35)] transition-transform hover:scale-105"
           >
             {t.startProject}
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#140f22] text-white transition-transform duration-500 group-hover:-rotate-45 rtl:-scale-x-100">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#140f22] text-white transition-transform duration-500 group-hover:-rotate-45 rtl:-scale-x-100 md:h-10 md:w-10">
               →
             </span>
           </button>
           <a
             href={lang === "ar" ? "/cv/Sohila-Ebrahim-CV-ar.pdf" : "/cv/Sohila-Ebrahim-CV.pdf"}
             download
-            className="rounded-full border border-white/40 bg-white/10 px-5 py-3.5 text-sm font-bold backdrop-blur transition hover:bg-white hover:text-[#140f22]"
+            className="shrink-0 rounded-full border border-white/40 bg-white/10 px-4 py-2.5 text-xs font-bold backdrop-blur md:px-5 md:py-3.5 md:text-sm transition hover:bg-white hover:text-[#140f22]"
           >
             {t.downloadCv} ↓
           </a>

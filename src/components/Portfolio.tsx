@@ -66,7 +66,7 @@ export default function Portfolio() {
       const mm = gsap.matchMedia();
       // scroll-driven, so it also runs when the OS asks for less motion (it only moves with the visitor's own scrolling)
       if (tab !== "projects") return () => mm.revert();
-      mm.add("(min-width: 768px)", () => {
+      mm.add("(min-width: 768px) and (pointer: fine)", () => {
         const el = track.current!;
         el.style.scrollSnapType = "none";
         el.style.scrollBehavior = "auto";

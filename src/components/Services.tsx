@@ -37,16 +37,21 @@ export default function Services() {
     () => {
       const cards = gsap.utils.toArray<HTMLElement>(".svc-card");
       const light = window.innerWidth < 768 || prefersReduced();
+      if (light) {
+        // phones: no stacking, just a soft fade/slide-in per card
+        cards.forEach((card) => gsap.from(card, { y: 40, opacity: 0, duration: 0.7, ease: "power2.out", scrollTrigger: { trigger: card, start: "top 88%" } }));
+        return;
+      }
       cards.forEach((card, i) => {
         if (i < cards.length - 1) {
           gsap.to(card.querySelector(".svc-inner"), {
-            scale: light ? 0.96 : 0.9,
-            filter: "brightness(0.5)",
+            scale: 0.9,
+            opacity: 0.45,
             ease: "none",
             scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top 25%", scrub: true },
           });
         }
-        if (!light) gsap.from(card.querySelectorAll(".svc-anim"), { y: 40, opacity: 0, stagger: 0.08, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: card, start: "top 70%" } });
+        gsap.from(card.querySelectorAll(".svc-anim"), { y: 40, opacity: 0, stagger: 0.08, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: card, start: "top 70%" } });
       });
     },
     { scope: ref, dependencies: [lang], revertOnUpdate: true }
@@ -64,8 +69,8 @@ export default function Services() {
 
       <div className="mt-16">
         {list.map((s, i) => (
-          <div key={s.title} className="svc-card sticky pb-6" style={{ top: `calc(96px + ${i * 18}px)` }}>
-            <article className="svc-inner grid min-h-[58vh] origin-top gap-8 rounded-[32px] border border-white/10 bg-gradient-to-br from-[#1c1733] to-[#0f0c19] p-6 shadow-[0_-24px_60px_rgba(0,0,0,.5)] md:grid-cols-[auto_1fr_1fr] md:items-center md:gap-14 md:p-12">
+          <div key={s.title} className="svc-card pb-4 md:sticky md:pb-6" style={{ top: `calc(96px + ${i * 18}px)` }}>
+            <article className="svc-inner grid origin-top md:min-h-[58svh] gap-8 rounded-[32px] border border-white/10 bg-gradient-to-br from-[#1c1733] to-[#0f0c19] p-6 md:shadow-[0_-24px_60px_rgba(0,0,0,.5)] md:grid-cols-[auto_1fr_1fr] md:items-center md:gap-14 md:p-12">
               <div className="flex items-center gap-5 md:flex-col md:items-start">
                 <span className={`flex h-16 w-16 items-center justify-center rounded-[20px] bg-gradient-to-br ${grads[i % grads.length]} text-3xl text-white shadow-[0_12px_28px_rgba(91,33,182,.35),inset_0_2px_0_rgba(255,255,255,.5)]`}>
                   {icons[i % icons.length]}

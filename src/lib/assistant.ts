@@ -12,7 +12,7 @@ export function knowledge(): string {
     `Education: ${education.map((e) => `${e.period} ${e.degree ? e.degree + ", " : ""}${e.school}`).join("; ")}.`,
     `Languages: ${languages.map((l) => l.name + (l.level ? ` (${l.level})` : "")).join(", ")}. Expertise: ${expertise.join(", ")}.`,
     `Bio: ${profile.bio.join(" ")}`,
-    `Contact: email ${profile.email}, phone/WhatsApp ${profile.phone} (${profile.whatsapp}), GitHub https://github.com/sohilaebrahim00.`,
+    `Contact: email ${profile.email}, phone/WhatsApp ${profile.phone} (${profile.whatsapp}), GitHub https://github.com/sohila-ebrahim.`,
     `Services:\n${services.map((s) => `- ${s.title}: ${s.description} (${s.points.join(", ")})`).join("\n")}`,
     `Experience:\n${experience.map((e) => `- ${e.role}, ${e.company}, ${e.period}: ${e.points.join(" ")}`).join("\n")}`,
     `Stack:\n${stack.map((g) => `- ${g.group}: ${g.items.map((i) => i.name).join(", ")}`).join("\n")}`,

@@ -101,7 +101,7 @@ export default function AskSohila() {
           <span className="block text-sm font-bold leading-tight">{t.ask}</span>
           <span className="block text-[11px] leading-tight text-accent-soft">✦ {t.askSub}</span>
         </span>
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white">✦</span>
+        <span className="hidden h-9 w-9 items-center justify-center rounded-full bg-accent text-white sm:flex">✦</span>
       </button>
     </div>
   );

@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { useLang } from "@/lib/lang";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap, prefersReduced, useGSAP } from "@/lib/gsap";
 import { scrollToTarget } from "@/lib/scroll";
 import { projects } from "@/data/portfolio";
 import ProjectImage from "./ProjectImage";
@@ -23,12 +23,17 @@ export default function FeaturedProjects() {
   useGSAP(
     () => {
       const cards = gsap.utils.toArray<HTMLElement>(".fp-card");
+      if (window.innerWidth < 768 || prefersReduced()) {
+        // phones: no stacking, just a soft fade/slide-in per card
+        cards.forEach((card) => gsap.from(card, { y: 40, opacity: 0, duration: 0.7, ease: "power2.out", scrollTrigger: { trigger: card, start: "top 88%" } }));
+        return;
+      }
       cards.forEach((card, i) => {
         const inner = card.querySelector(".fp-inner");
         if (i < cards.length - 1) {
           gsap.to(inner, {
             scale: 0.9 + i * 0.015,
-            filter: "brightness(0.55)",
+            opacity: 0.45,
             ease: "none",
             scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top 20%", scrub: true },
           });
@@ -48,8 +53,8 @@ export default function FeaturedProjects() {
 
       <div className="mt-16">
         {featured.map((p, i) => (
-          <div key={p.slug} className="fp-card sticky pb-8" style={{ top: `calc(90px + ${i * 22}px)` }}>
-            <article className="fp-inner grid origin-top items-center gap-6 rounded-[32px] border border-white/10 bg-gradient-to-br from-[#1b1630] to-[#100d1a] p-5 shadow-[0_-20px_60px_rgba(0,0,0,.45)] md:grid-cols-[0.8fr_1.4fr] md:gap-10 md:p-10">
+          <div key={p.slug} className="fp-card pb-6 md:sticky md:pb-8" style={{ top: `calc(90px + ${i * 22}px)` }}>
+            <article className="fp-inner grid origin-top items-center gap-6 rounded-[32px] border border-white/10 bg-gradient-to-br from-[#1b1630] to-[#100d1a] p-5 md:shadow-[0_-20px_60px_rgba(0,0,0,.45)] md:grid-cols-[0.8fr_1.4fr] md:gap-10 md:p-10">
               <div className="flex flex-col justify-between gap-6 md:h-full">
                 <p className="fp-num font-heavy text-[22vw] leading-[0.85] text-brand md:text-[11vw] xl:text-[170px]">{String(i + 1).padStart(2, "0")}.</p>
                 <div>

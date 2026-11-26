@@ -60,7 +60,7 @@ export default async function CvPage({ params }: { params: Promise<{ lang: strin
           <p>{profile.phone}</p>
           <p>{profile.email}</p>
           <p>sohila-portfolio-ten.vercel.app</p>
-          <p>github.com/sohilaebrahim00 · {c.location}</p>
+          <p>github.com/sohila-ebrahim · {c.location}</p>
         </div>
       </div>
 

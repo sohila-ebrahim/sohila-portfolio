@@ -316,7 +316,7 @@ export default function Badge3D({ className = "" }: { className?: string }) {
 
   return (
     <div ref={wrap} className={className}>
-      <Canvas camera={{ position: [0, 0, typeof window !== "undefined" && window.innerWidth < 768 ? 15 : 10], fov: 25 }} dpr={[1, 2]} gl={{ alpha: true, antialias: true }} frameloop={visible ? "always" : "never"} style={{ background: "transparent" }}>
+      <Canvas camera={{ position: [0, 0, typeof window !== "undefined" && window.innerWidth < 768 ? 15 : 10], fov: 25 }} dpr={[1, 1.5]} gl={{ alpha: true, antialias: true }} frameloop={visible ? "always" : "never"} style={{ background: "transparent" }}>
         <ambientLight intensity={Math.PI * 0.6} />
         {textures && (
           <Physics gravity={[0, -40, 0]} timeStep={1 / 60} paused={!visible} interpolate>

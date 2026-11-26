@@ -11,6 +11,7 @@ export const getLenis = () => instance;
 export function scrollToTarget(target: string | number) {
   if (instance) instance.scrollTo(target, { offset: 0, duration: 1.4 });
   else if (typeof target === "string") document.querySelector(target)?.scrollIntoView({ behavior: "smooth" });
+  else window.scrollTo({ top: target, behavior: "smooth" });
 }
 
 /** Fired once the preloader finished, so the hero can start animating. */

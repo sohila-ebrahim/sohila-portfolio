@@ -26,6 +26,14 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
   const box = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
   const strap = useRef<SVGPathElement>(null);
+  const [flipped, setFlipped] = useState(false);
+  const [qr, setQr] = useState("");
+  const flip = useRef(() => setFlipped((v) => !v));
+
+  // QR code for the back of the card (light: generated once on the client)
+  useEffect(() => {
+    import("qrcode").then((Q) => Q.toDataURL("https://sohila-portfolio-ten.vercel.app", { margin: 1, width: 300, color: { dark: "#140f22", light: "#ffffff" } })).then(setQr).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const el = box.current!;
@@ -82,8 +90,11 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
       const r = el.getBoundingClientRect();
       return { x: e.clientX - r.left, y: e.clientY - r.top };
     };
+    let tap: { x: number; y: number; t: number } | null = null;
     const down = (e: PointerEvent) => {
-      if (reduce) return;
+      tap = { x: e.clientX, y: e.clientY, t: performance.now() };
+      // touch: no dragging, so the page keeps scrolling; a tap flips the card
+      if (reduce || e.pointerType === "touch") return;
       const l = local(e);
       drag = { id: e.pointerId, dx: l.x - p.x, dy: l.y - p.y };
       target = { ...p };
@@ -96,6 +107,8 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
       target = { x: l.x - drag.dx, y: l.y - drag.dy };
     };
     const up = (e: PointerEvent) => {
+      if (tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 8 && performance.now() - tap.t < 400) flip.current();
+      tap = null;
       if (!drag || e.pointerId !== drag.id) return;
       drag = null;
       card.current!.style.cursor = "grab";
@@ -140,14 +153,24 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
       <div
         ref={card}
         data-cursor
-        style={{ width, transformOrigin: `${width / 2}px 0px`, cursor: "grab", touchAction: "none", fontSize: fs }}
+        style={{ width, transformOrigin: `${width / 2}px 0px`, cursor: "grab", touchAction: "pan-y", fontSize: fs, perspective: 900 }}
         className="absolute left-0 top-0 will-change-transform"
         aria-label={`ID badge: ${profile.firstName} ${profile.lastName}, ${profile.role}`}
         dir="ltr"
       >
         {/* metal clip */}
         <div className="mx-auto h-[1.5em] w-[2.5em] rounded-b-md rounded-t-sm bg-gradient-to-b from-zinc-200 to-zinc-500 shadow" />
-        <div className={`-mt-1 overflow-hidden rounded-[1em] border border-white/15 bg-gradient-to-b from-[#1d1830] to-[#110e1c] shadow-[0_30px_60px_rgba(0,0,0,0.5)] ${glow ? "badge-glow" : "shadow-[0_0_40px_rgba(139,92,246,0.25)]"}`}>
+        <div className="relative -mt-1 transition-transform duration-700 ease-[cubic-bezier(.3,1.3,.5,1)]" style={{ transformStyle: "preserve-3d", transform: `rotateY(${flipped ? 180 : 0}deg)` }}>
+        {/* back: QR code to the site (tap / click the card to flip) */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.8em] rounded-[1em] border border-white/15 bg-gradient-to-br from-[#2a1760] to-[#0f0c19] p-[1em]" style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}>
+          {qr && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={qr} alt="QR code to sohila-portfolio-ten.vercel.app" className="w-[70%] rounded-[0.6em] bg-white p-[0.4em]" draggable={false} />
+          )}
+          <p className="text-[1.1em] font-extrabold">Scan to visit</p>
+          <p className="text-[0.62em] text-accent-soft">sohila-portfolio-ten.vercel.app</p>
+        </div>
+        <div style={{ backfaceVisibility: "hidden" }} className={`overflow-hidden rounded-[1em] border border-white/15 bg-gradient-to-b from-[#1d1830] to-[#110e1c] shadow-[0_30px_60px_rgba(0,0,0,0.5)] ${glow ? "badge-glow" : "shadow-[0_0_40px_rgba(139,92,246,0.25)]"}`}>
           <div className="flex items-center justify-between bg-accent px-[1em] py-[0.5em] text-[0.62em] font-extrabold uppercase tracking-[0.25em]">
             <span>Developer</span>
             <span>{profile.year}</span>
@@ -172,6 +195,7 @@ export default function IdBadge({ width = 250, rope = 230, height = "560px", swi
               </span>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

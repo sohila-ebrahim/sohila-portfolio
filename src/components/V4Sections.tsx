@@ -140,7 +140,7 @@ export function ServiceLetters() {
     { scope: ref }
   );
   return (
-    <section ref={ref} className="px-site py-24 md:py-32" style={{ backgroundColor: "#f4f2fa", color: "#140f22" }}>
+    <section ref={ref} className="px-site overflow-hidden py-24 md:py-32" style={{ backgroundColor: "#f4f2fa", color: "#140f22" }}>
       <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <h2 className="font-display text-4xl font-bold md:text-6xl">{t.lettersTitle}</h2>
         {/* the tiles' letters assemble into her name while you scroll */}

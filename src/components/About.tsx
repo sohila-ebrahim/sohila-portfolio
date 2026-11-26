@@ -10,7 +10,7 @@ export default function About() {
   useGSAP(
     () => {
       // scroll-stretched headline: each line starts wide and squashed, then settles while the words light up
-      gsap.utils.toArray<HTMLElement>(".ab-line").forEach((line) => {
+      if (window.innerWidth >= 768) gsap.utils.toArray<HTMLElement>(".ab-line").forEach((line) => {
         gsap.fromTo(
           line,
           { scaleX: 1.35, scaleY: 0.55, letterSpacing: "0.08em" },

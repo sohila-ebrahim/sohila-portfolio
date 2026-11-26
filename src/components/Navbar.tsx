@@ -171,7 +171,7 @@ export default function Navbar() {
 
       {/* full-screen menu */}
       <div
-        className={`fixed inset-0 z-[55] flex flex-col justify-center overflow-y-auto bg-[#0b0914] px-8 transition-[clip-path] duration-700 ease-[cubic-bezier(.77,0,.18,1)] md:px-20 ${
+        className={`fixed inset-0 z-[55] flex flex-col justify-center overflow-y-auto overflow-x-hidden bg-[#0b0914] px-8 transition-[clip-path] duration-700 ease-[cubic-bezier(.77,0,.18,1)] md:px-20 ${
           open ? "[clip-path:inset(0_0_0_0)]" : "pointer-events-none [clip-path:inset(0_0_100%_0)]"
         }`}
         aria-hidden={!open}
@@ -185,7 +185,7 @@ export default function Navbar() {
                 href={isHome ? l.href : `/${l.href}`}
                 onClick={(e) => go(e, l.href)}
                 tabIndex={open ? 0 : -1}
-                className={`group flex items-baseline gap-5 font-display text-5xl font-bold uppercase transition duration-700 md:text-7xl ${open ? "translate-y-0" : "translate-y-full"}`}
+                className={`group flex items-baseline gap-4 font-display text-[9vw] font-bold uppercase transition duration-700 sm:text-5xl md:text-7xl ${open ? "translate-y-0" : "translate-y-full"}`}
                 style={{ transitionDelay: open ? `${150 + i * 60}ms` : "0ms" }}
               >
                 <span className="text-sm text-accent">0{i + 1}</span>

@@ -25,6 +25,7 @@ export default function Preloader() {
       const counter = { v: 0 };
       const count = ref.current!.querySelector(".pl-count")!;
       const tl = gsap.timeline({ onComplete: finish });
+      if (window.innerWidth < 768) tl.timeScale(1.8);
       tl.from(".pl-char", { yPercent: 120, stagger: 0.04, duration: 0.9, ease: "power4.out" })
         .from(".pl-glow", { scale: 0.4, opacity: 0, duration: 1.6, ease: "power2.out" }, 0)
         .to(counter, {

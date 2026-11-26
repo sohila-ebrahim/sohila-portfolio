@@ -27,7 +27,7 @@ export default function FloatingButtons() {
         target="_blank"
         rel="noreferrer"
         aria-label="Chat on WhatsApp"
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-[0_0_0_8px_rgba(37,211,102,.12),0_10px_30px_rgba(37,211,102,.35)] transition hover:scale-110"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] md:h-14 md:w-14 shadow-[0_0_0_8px_rgba(37,211,102,.12),0_10px_30px_rgba(37,211,102,.35)] transition hover:scale-110"
       >
         <TechIcon name="WhatsApp" icon="siWhatsapp" size={28} mono />
       </a>
